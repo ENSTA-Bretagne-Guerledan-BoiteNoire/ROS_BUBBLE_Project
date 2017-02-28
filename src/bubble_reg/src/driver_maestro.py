@@ -9,7 +9,7 @@
 # Output : Envoie les commandes aux actuateurs
 import rospy
 from std_msgs.msg import Float32
-from lib.maestro import Controller
+from maestro.maestro import Controller
 
 # 1000 : marche avant
 # 1500 : statique
