@@ -10,7 +10,7 @@ import pylab
 
 Fs, a = sciwave.read('90-180pool1.wav')
 a = np.array(a)
-a = a / (2.0**15 - 1.0)
+a = a / (2.0**15 - 1.0)     # Normalisation des donnees (valeurs sur 16 bits)
 
 ####### Parametres modifiables ###
 
@@ -58,7 +58,7 @@ for ih in range (0,int(N)):
 
 # Sample covariance matrix
 Rxx = np.dot(x0,x0.conj().T)/L;
-print(Rxx)
+
 # Search directions
 AzSearch = np.linspace(0,180,181); # Azimuth values to search
 ElSearch = np.zeros(AzSearch.shape); # Simple 1D example
