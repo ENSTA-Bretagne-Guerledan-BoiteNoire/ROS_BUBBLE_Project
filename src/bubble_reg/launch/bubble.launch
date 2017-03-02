@@ -8,7 +8,7 @@
         <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py"/>
         <node pkg="bubble_reg" name="driver_maestro" type="driver_maestro.py"/>
 
-        <node pkg="bubble_reg" name="bubble_reg" type="bubble_reg"/>
+        <node pkg="bubble_reg" name="regulation" type="regulation"/>
         <node pkg="bubble_reg" name="map_handler" type="map_handler"/>
 
         <group ns="gps">

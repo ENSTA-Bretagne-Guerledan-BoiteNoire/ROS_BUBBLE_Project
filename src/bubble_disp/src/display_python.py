@@ -6,6 +6,7 @@ from geometry_msgs.msg import Pose
 from std_msgs.msg import Float32
 import numpy as np
 import matplotlib.pyplot as plt
+import tf.transformations as tf
 
 # 1 = Left
 # 2 = Right
@@ -27,10 +28,17 @@ class display():
         self.closed = False
 
     def updatePose(self, msg):
+        print "Received pose : ",msg
+        self.x = msg.position.x
+        self.y = msg.position.y
 
-        self.x = msg.linear.x
-        self.y = msg.linear.y
-        self.theta = msg.angular.z
+        quaternion = (
+            msg.orientation.x,
+            msg.orientation.y,
+            msg.orientation.z,
+            msg.orientation.w)
+        (roll,pitch,yaw) = tf.euler_from_quaternion(quaternion)
+        self.theta = yaw
 
     def update_trace(self):
         MAX_SIZE = 500
@@ -68,26 +76,26 @@ class display():
         fig.canvas.mpl_connect('close_event', self.handle_close)
         plt.show(block=False)
 
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(10)
 
         while not rospy.is_shutdown() and not self.closed:
 
-            # call all waiting callbacks
-            rospy.spin()
+            plt.clf()
 
             self.update_trace()
-
-            plt.clf()
+            print "====== Plotting trace"
             plt.plot(self.x, self.y, 'ro')
             plt.plot(self.xt, self.yt, 'g')
 
+            print "====== Plotting boat"
             hull = self.draw_boat()
             plt.plot(hull[0], hull[1], 'k', linewidth=2)
 
             plt.axis([self.x - 150, self.x + 150, self.y - 150, self.y + 150])
-            plt.pause(rate.sleep_dur.to_sec())
+            plt.axis('equal')
 
-            rate.sleep()
+            plt.pause(rate.sleep_dur.to_sec())
+            # rate.sleep()
 
 
 if __name__ == '__main__':

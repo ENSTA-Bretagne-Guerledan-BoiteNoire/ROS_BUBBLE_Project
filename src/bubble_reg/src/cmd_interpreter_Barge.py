@@ -22,6 +22,7 @@ class barge_command():
         self.thrustR = 0
 
     def callback(self, msg):
+        print 'Received ',msg
 
         twistAngZ = msg.angular.z
         twistLinX = msg.linear.x
@@ -29,6 +30,7 @@ class barge_command():
         self.thrustL = twistLinX + twistAngZ
         self.thrustR = twistLinX - twistAngZ
 
+        print 'Publishing ',self.thrustL,' and ',self.thrustR
         self.cmdT1.publish(self.thrustL)
         self.cmdT2.publish(self.thrustR)
 

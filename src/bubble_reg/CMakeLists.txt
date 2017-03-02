@@ -133,27 +133,27 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(local_converter src/local_converter.cpp)
-add_executable(bubble_reg src/bubble_reg.cpp)
+add_executable(regulation src/regulation.cpp)
 add_executable(path src/path.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(local_converter PROPERTIES OUTPUT_NAME node PREFIX "")
-set_target_properties(bubble_reg PROPERTIES OUTPUT_NAME node PREFIX "")
-set_target_properties(path PROPERTIES OUTPUT_NAME node PREFIX "")
+#set_target_properties(local_converter PROPERTIES OUTPUT_NAME node PREFIX "")
+#set_target_properties(regulation PROPERTIES OUTPUT_NAME node PREFIX "")
+#set_target_properties(path PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(local_converter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(bubble_reg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(regulation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(path ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(local_converter ${catkin_LIBRARIES})
-target_link_libraries(bubble_reg ${catkin_LIBRARIES})
+target_link_libraries(regulation ${catkin_LIBRARIES})
 target_link_libraries(path ${catkin_LIBRARIES})
 
 #############

@@ -35,9 +35,14 @@ class key_interpreter():
             elif self.speed > 1:
                 self.speed = 1
 
+        print 'cmds : ',self.angCmd,' and ',self.linCmd,' and speed : ',self.speed
         t = Twist()
+        t.angular.x = 0
+        t.angular.y = 0
         t.angular.z = self.angCmd * self.speed
         t.linear.x = self.linCmd * self.speed
+        t.linear.y = 0
+        t.linear.z = 0
         twist_pub.publish(t)
 
 if __name__ == '__main__':

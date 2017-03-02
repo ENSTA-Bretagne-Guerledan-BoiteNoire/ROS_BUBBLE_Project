@@ -29,6 +29,15 @@ public:
         cmdVel_pub = node.advertise<geometry_msgs::Twist>("cmd_vel", 1);
 
         // Internal variables
+        cmd_state = manual;
+
+        cmd_vel.angular.x = 0;
+        cmd_vel.angular.y = 0;
+        cmd_vel.angular.z = 0;
+        cmd_vel.linear.x = 0;
+        cmd_vel.linear.y = 0;
+        cmd_vel.linear.z = 0;
+
         pose_real.position.z = 0;
         pose_real.position.x = 0;
         pose_real.position.y = 0;
@@ -85,7 +94,7 @@ public:
         const double dist2Line = fabs(penteLine*x + y + offsetLine)/sqrt( pow(x,2) + pow(y,2) );
         const double wantedHead = angle_rad(headLine,- atan(dist2Line));
 
-        const double twist = atan(tan(angle_rad(wantedHead,- head)/2));
+        const double twist = angle_rad(wantedHead,- head)/2.0;
         const double dist2Obj = distance(x,y,bx,by);
 
         cmd_vel.angular.z = twist;

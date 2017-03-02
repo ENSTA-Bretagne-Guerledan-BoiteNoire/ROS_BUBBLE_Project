@@ -43,6 +43,8 @@ public:
         pose_real.orientation.y = q.y();
 
         researchPath = generateResPath("square",0,0,20,20);
+
+        std::cout << "Initialization done" << std::endl;
     }
 
     void updatePoseReal(const geometry_msgs::Pose::ConstPtr& msg){
@@ -156,7 +158,7 @@ private:
             for (int i = 0; i < pathYLen; ++i) {
                 int yCoord = 2*i;
 
-                if(modf(i, (double *) 2) == 0){
+                if(fmod(i, 2) == 0){
                     for (int j = 0; j < pathXLen; ++j) {
                         int xCoord = 2*j;
 
