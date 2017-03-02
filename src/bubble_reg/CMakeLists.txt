@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(bubble_reg)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
-# add_definitions(-std=c++11)
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,7 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         std_msgs
         geometry_msgs
-        sensor_msgs)
+        sensor_msgs
+        bubble_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -116,7 +117,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -131,24 +132,29 @@ include_directories(include)
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(map_handler src/map_handler.cpp)
+add_executable(local_converter src/local_converter.cpp)
 add_executable(bubble_reg src/bubble_reg.cpp)
+add_executable(path src/path.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(map_handler PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(local_converter PROPERTIES OUTPUT_NAME node PREFIX "")
 set_target_properties(bubble_reg PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(path PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(map_handler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(local_converter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(bubble_reg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(path ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(map_handler ${catkin_LIBRARIES})
+target_link_libraries(local_converter ${catkin_LIBRARIES})
 target_link_libraries(bubble_reg ${catkin_LIBRARIES})
+target_link_libraries(path ${catkin_LIBRARIES})
 
 #############
 ## Install ##

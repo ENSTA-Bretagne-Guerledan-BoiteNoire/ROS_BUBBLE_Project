@@ -1,25 +1,32 @@
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/TimeReference.h"
+#include "sensor_msgs/Imu.h"
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/TwistStamped.h"
 #include "geodesy/utility.h"
-#include <iostream>
-#include <math.h>
+//#include "tf/transform_datatypes.h"
+//#include <iostream>
+//#include <math.h>
 
 class Map
 {
 public:
     Map(){
         // Subscribers
-        gpsFix_sub = node.subscribe("fix", 1, &Map::updateGpsFix, this);
-//        gpsVel_sub = node.subscribe("vel", 1, &Map::updateGpsVel, this);
-//        timeRef_sub = node.subscribe("time_reference", 1, &Map::updateTimeRef, this);
+        gpsFix_sub = node.subscribe("gps/fix", 1, &Map::updateGpsFix, this);
+//        gpsVel_sub = node.subscribe("gps/vel", 1, &Map::updateGpsVel, this);
+//        timeRef_sub = node.subscribe("gps/time_reference", 1, &Map::updateTimeRef, this);
+        imu_sub = node.subscribe("imu", 1, &Map::updateImu, this);
 
         // Publishers
-        pose_pub = node.advertise<geometry_msgs::Pose>("cmd", 1);
+        pose_pub = node.advertise<geometry_msgs::Pose>("pose_est", 1);
 
         // Internal variables
+        pose.position.z = 0;
+        pose.position.x = 0;
+        pose.position.y = 0;
+
     }
 
     void updateGpsFix(const sensor_msgs::NavSatFix::ConstPtr& msg){
@@ -37,8 +44,8 @@ public:
 //        ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", x, y, z);
 //    }
 
-    void updateCommand(){
-
+    void updateImu(const sensor_msgs::Imu::ConstPtr& msg){
+        pose.orientation = msg->orientation;
     }
 
     void spin(){
@@ -50,7 +57,6 @@ public:
             // call all waiting callbacks
             ros::spinOnce();
 
-            updateCommand();
             // publish the command
             pose_pub.publish(pose);
 
@@ -67,6 +73,7 @@ private:
     ros::Subscriber gpsFix_sub;
     ros::Subscriber gpsVel_sub;
     ros::Subscriber timeRef_sub;
+    ros::Subscriber imu_sub;
 
     // Publishers
     ros::Publisher pose_pub;
@@ -84,7 +91,7 @@ int main(int argc, char **argv)
 {
     // Node initialization
     std::cout << "Node initialization " << std::endl;
-    ros::init(argc, argv, "map_handler");
+    ros::init(argc, argv, "local_converter");
 
     Map map;
 
