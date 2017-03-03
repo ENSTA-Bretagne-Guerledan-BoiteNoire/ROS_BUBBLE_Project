@@ -8,10 +8,16 @@
         <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py"/>
         <node pkg="bubble_reg" name="driver_maestro" type="driver_maestro.py"/>
 
-	    <node pkg="nmea_navsat_driver" name="gps_driver" type="nmea_serial_driver">
-            	<param name="port" value="/dev/ttyUSB1"/>
-            	<param name="baud" value="4800"/>
-	   </node>
+        <node pkg="bubble_reg" name="regulation" type="regulation"/>
+        <node pkg="bubble_reg" name="map_handler" type="map_handler"/>
+
+        <group ns="gps">
+            <node pkg="nmea_navsat_driver" name="gps_driver" type="nmea_serial_driver">
+                    <param name="port" value="/dev/ttyUSB1"/>
+                    <param name="baud" value="4800"/>
+            </node>
+        </group>
+
     </group>
 
 </launch>

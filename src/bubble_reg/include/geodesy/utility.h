@@ -2,8 +2,26 @@
 // Created by tag on 28/02/17.
 //
 
-static double angle(double a1,double a2){
+#include <math.h>
 
+static double angle_deg(double a1,double a2){
+    return fmod( a1 + a2 + 180, 360 ) - 180;
+}
+
+static double angle_rad(double a1,double a2){
+    return fmod( a1 + a2 + M_PI, 2*M_PI ) - M_PI;
+}
+
+//static double enu2ned_yaw_rad(){
+//
+//}
+
+static double ned2enu_yaw_rad(double yaw){
+    return angle_rad(M_PI/2,- yaw);
+}
+
+static double ned2enu_yaw_deg(double yaw){
+    return angle_deg(90,- yaw);
 }
 
 /**
@@ -27,5 +45,10 @@ static double latDeg2meters(double latPos,double latOrigin){
 static double longDeg2meters(double longPos,double latOrigin, double longOrigin){
     const double earthPerimeter = 40030000; //m
     const double Rterre = 6360000; //m
-    return (longPos-longOrigin)*Rterre*cosd(latOrigin)/360*2*M_PI;
+    const double circlePerimeter = Rterre*cos(latOrigin/180*M_PI)*2*M_PI;
+    return (longPos-longOrigin)/360*circlePerimeter;
+}
+
+static double distance(double x1, double y1, double x2, double y2){
+    return sqrt( pow(x2-x1,2) + pow(y2-y1,2) );
 }
