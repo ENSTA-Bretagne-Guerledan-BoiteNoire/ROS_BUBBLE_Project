@@ -2,15 +2,18 @@ import scipy.io.wavfile as sciwave
 from scipy.fftpack import fft
 import math
 import numpy as np
-import pyaudio
+import RecPing
+import time
 import pylab
 
 # ========= (1) ENREGISTREMENT ==========
 
+filename = time.strftime("%d%b%Y_%H%M%S.wav")  # titre du fichier = date
+RecPing.recPing(filename)  # enregistrement
 
 # ========= (2) RECEIVED SIGNAL =========
 
-Fs, a = sciwave.read('90-180pool1.wav')
+Fs, a = sciwave.read(filename)
 a = np.array(a)
 a = a / (2.0**15 - 1.0)     # Normalisation des donnees (valeurs sur 16 bits)
 
@@ -91,3 +94,11 @@ for i in range (0,np.size(AzSearch)):
     Zm.append(abs(1/Z));
 
 Zm = 10*np.log10(Zm/max(Zm))
+
+Zmi=np.argmax(Zm);
+angle = AzSearch[Zmi];
+print("Angle  :", angle )
+
+# Plot spectrum
+#pylab.plot(AzSearch,Zm)
+#pylab.show()

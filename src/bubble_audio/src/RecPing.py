@@ -7,7 +7,7 @@ def recPing(WAVE_OUTPUT_FILENAME): #enregistre sous le nom "son.wav" 1 seconde d
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
     RATE = 44100
-    RECORD_SECONDS = 12
+    RECORD_SECONDS = 7
 
     p = pyaudio.PyAudio()
 
@@ -39,8 +39,9 @@ def recPing(WAVE_OUTPUT_FILENAME): #enregistre sous le nom "son.wav" 1 seconde d
     wf.close()
 
 
-
+'''
 
 if __name__=='__main__':
     filename = time.strftime("%d%b%Y_%H%M%S.wav") #titre du fichier = date
     recPing(filename)                             #enregistrement
+    '''
