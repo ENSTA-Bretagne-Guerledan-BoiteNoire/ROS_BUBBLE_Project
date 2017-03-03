@@ -1,10 +1,12 @@
-import wave
 import scipy.io.wavfile as sciwave
 from scipy.fftpack import fft
 import math
 import numpy as np
 import pyaudio
 import pylab
+
+# ========= (1) ENREGISTREMENT ==========
+
 
 # ========= (2) RECEIVED SIGNAL =========
 
@@ -43,6 +45,7 @@ for ih in range (0,int(N)):
         X[:,ih,iv]=fft(tmp);
 
 
+
 # Find the closest frequency from the discrete frequency vector resulted from FFT
 values=abs(F-f);
 mf=np.amin(values);
@@ -53,8 +56,6 @@ x0=np.zeros((int(N), int(K)),dtype='complex');
 for ih in range (0,int(N)):
     for iv in range (0,int(K)):
         x0[ih,iv]=X[mi,ih,iv]; # signal complexe
-
-## Common parameters for all algo
 
 # Sample covariance matrix
 Rxx = np.dot(x0,x0.conj().T)/L;
@@ -67,30 +68,6 @@ ElSearch = np.zeros(AzSearch.shape); # Simple 1D example
 # Corresponding points on array manifold to search
 kSearch = math.pi*np.array([np.cos(np.radians(AzSearch))*np.cos(np.radians(ElSearch)), np.sin(np.radians(AzSearch))*np.cos(np.radians(ElSearch)), np.sin(np.radians(ElSearch))]);
 ASearch = np.exp(-1j*np.dot(r,kSearch));
-
-###############################################################################################################
-## Bartlett or Conventional Beamforming
-
-#Bartlett spectrum
-Zbf=[]
-for i in range (0,np.size(AzSearch)):
-    Z=(ASearch[:,i].conj().T).dot(Rxx).dot(ASearch[:,i]);
-    Zbf.append(abs(Z));
-
-pylab.figure()
-Zbf = 10*np.log10(Zbf/max(Zbf))
-pylab.plot(AzSearch,Zbf)
-
-#################################################################################################################
-## Capon
-
-# Capon spectrum
-Zc=[]
-for i in range (0,np.size(AzSearch)):
-    Z=(ASearch[:,i].conj().T).dot(np.linalg.inv(Rxx)).dot(ASearch[:,i]);
-    Zc.append(abs(1/Z));
-Zc = 10*np.log10(Zc/max(Zc))
-pylab.plot(AzSearch,Zc)
 
 
 ##################################################################################################################
@@ -114,5 +91,3 @@ for i in range (0,np.size(AzSearch)):
     Zm.append(abs(1/Z));
 
 Zm = 10*np.log10(Zm/max(Zm))
-pylab.plot(AzSearch,Zm)
-pylab.show()
