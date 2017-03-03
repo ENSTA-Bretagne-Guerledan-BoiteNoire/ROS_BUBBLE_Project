@@ -72,6 +72,15 @@ ElSearch = np.zeros(AzSearch.shape); # Simple 1D example
 kSearch = math.pi*np.array([np.cos(np.radians(AzSearch))*np.cos(np.radians(ElSearch)), np.sin(np.radians(AzSearch))*np.cos(np.radians(ElSearch)), np.sin(np.radians(ElSearch))]);
 ASearch = np.exp(-1j*np.dot(r,kSearch));
 
+#################################################################################################################
+## Capon
+
+# Capon spectrum
+Zc=[]
+for i in range (0,np.size(AzSearch)):
+    Z=(ASearch[:,i].conj().T).dot(np.linalg.inv(Rxx)).dot(ASearch[:,i]);
+    Zc.append(abs(1/Z));
+Zc = 10*np.log10(Zc/max(Zc))
 
 ##################################################################################################################
 ## MUSIC
@@ -95,10 +104,23 @@ for i in range (0,np.size(AzSearch)):
 
 Zm = 10*np.log10(Zm/max(Zm))
 
+
+# Angle calculation
+Zcmin=np.amin(Zc);
+Zcmax=np.amax(Zc);
 Zmi=np.argmax(Zm);
-angle = AzSearch[Zmi];
-print("Angle  :", angle )
+
+# Amplitude detection Capon pour savoir si on a une fausse detection
+if (abs(Zcmax-Zcmin)<1):
+    angle=-180
+    print("Source not detected")
+# Position pic MUSIC pour determiner localisation source detectee
+else:
+    angle = AzSearch[Zmi];
+    print("Angle  :", angle )
 
 # Plot spectrum
+#pylab.figure()
+#pylab.plot(AzSearch,Zc)
 #pylab.plot(AzSearch,Zm)
 #pylab.show()
