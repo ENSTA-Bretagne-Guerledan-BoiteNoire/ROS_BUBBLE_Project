@@ -2,6 +2,9 @@
 
 Clone this as a new ros workspace
 
+Global dependencies :  
+`sudo pip install numpy`  
+
 Packages : 
  - nmea_navsat_driver  
 	`sudo apt-get install ros-indigo-nmea-navsat-driver`  

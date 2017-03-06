@@ -23,7 +23,7 @@ class world():
 
         # Publisher
         self.pose_pub = rospy.Publisher('pose_real', Pose, queue_size=1)
-        self.pose_pub = rospy.Publisher('twist_real', Twist, queue_size=1)
+        self.twist_pub = rospy.Publisher('twist_real', Twist, queue_size=1)
 
         # Internal variable
         self.dt = 0.1
@@ -67,7 +67,7 @@ class world():
             # print 'self.boat.pose.position.z : ',self.boat.pose.position.z
 
             self.pose_pub.publish(self.boat.pose)
-            self.pose_pub.publish(self.boat.twist)
+            self.twist_pub.publish(self.boat.twist)
 
             rate.sleep()
 
