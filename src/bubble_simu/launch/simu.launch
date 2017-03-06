@@ -10,7 +10,7 @@
         <node pkg="bubble_reg" name="path" type="path"/>
         <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py" output="screen"/>
         <node pkg="bubble_reg" name="regulation" type="regulation"/>
-        <node pkg="bubble_simu" name="sim_world" type="sim_world.py"/>
+        <node pkg="bubble_simu" name="sim_world" type="sim_world.py" output="screen"/>
 
         <node pkg="bubble_disp" name="display_python" type="display_python.py"/>
 

@@ -3,6 +3,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,6 +23,7 @@ class world():
 
         # Publisher
         self.pose_pub = rospy.Publisher('pose_real', Pose, queue_size=1)
+        self.pose_pub = rospy.Publisher('twist_real', Twist, queue_size=1)
 
         # Internal variable
         self.dt = 0.1
@@ -37,7 +39,7 @@ class world():
 
     def updateWorld(self):
         x,y,theta,v,delta = self.boat.move()
-        print 'dx',x,y,theta,v,delta
+        print 'dx : ',x,y,theta,v,delta
         self.boat.update(
             self.boat.x     + x*self.dt,
             self.boat.y     + y*self.dt,
@@ -56,15 +58,16 @@ class world():
             self.updateWorld()
 
             print 'Pose : ', self.boat.pose
-            print 'self.boat.pose.orientation.x : ',self.boat.pose.orientation.x
-            print 'self.boat.pose.orientation.y : ',self.boat.pose.orientation.y
-            print 'self.boat.pose.orientation.z : ',self.boat.pose.orientation.z
-            print 'self.boat.pose.orientation.w : ',self.boat.pose.orientation.w
-            print 'self.boat.pose.position.x : ',self.boat.pose.position.x
-            print 'self.boat.pose.position.y : ',self.boat.pose.position.y
-            print 'self.boat.pose.position.z : ',self.boat.pose.position.z
+            # print 'self.boat.pose.orientation.x : ',self.boat.pose.orientation.x
+            # print 'self.boat.pose.orientation.y : ',self.boat.pose.orientation.y
+            # print 'self.boat.pose.orientation.z : ',self.boat.pose.orientation.z
+            # print 'self.boat.pose.orientation.w : ',self.boat.pose.orientation.w
+            # print 'self.boat.pose.position.x : ',self.boat.pose.position.x
+            # print 'self.boat.pose.position.y : ',self.boat.pose.position.y
+            # print 'self.boat.pose.position.z : ',self.boat.pose.position.z
 
             self.pose_pub.publish(self.boat.pose)
+            self.pose_pub.publish(self.boat.twist)
 
             rate.sleep()
 
