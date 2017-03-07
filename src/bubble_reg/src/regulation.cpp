@@ -81,6 +81,7 @@ public:
     void updateCommand(){
 
 
+        printf(" --== Updating command ==-- \n");
 
         double ax = followedLine.prevWaypoint.x;
         printf("ax = [%f]\n",ax);
@@ -147,9 +148,32 @@ public:
 
         printf("lin vel = [%f]\n",atan(1/brakeDist*dist2Obj));
 
+        double dist2Line;
+        if( sqrt( pow(bx-ax,2) + pow(bx-ax,2)) != 0){
+            dist2Line = ((bx-ax)*(y-ay) - (by-ay)*(x-ax)) / sqrt( pow(bx-ax,2) + pow(bx-ax,2));
+        } else{ dist2Line = 100; }
+
+        printf("dist2Line = [%f]\n",dist2Line);
+
+        const double error = - atan(dist2Line);
+        printf("headLine = [%f]\n", headLine);
+        printf("error = [%f]\n", error);
+        printf("headLine - atan(dist2Line) = [%f]\n", headLine - atan(dist2Line));
+        printf("headLine - error = [%f]\n", headLine + error);
+
+        const double wantedHead = angle_rad(headLine, error);
+//        const double wantedHead = atan(tan(headLine - atan(dist2Line)));
+        printf("wantedHead = [%f]\n", wantedHead);
+
+        const double twist = angle_rad( wantedHead,- head)/2.0;
         cmd_vel.angular.z = twist;
+
 //        cmd_vel.linear.x = atan(1/brakeDist*dist2Obj); // Le 1/1* c'est pour que le bateau ralentisse à 1m
-        cmd_vel.linear.x = 1 - fabs(angle_rad(headLine,- head))/M_PI; // Le bateau ralenti si il n'est pas en face de la ligne
+        const double cmdLin = fabs(angle_rad(headLine,- head)); // Le bateau ralenti si il n'est pas en face de la ligne
+        const double tau = 5.0;
+        cmd_vel.linear.x = exp(-tau/M_PI*cmdLin)-exp(-tau);
+        printf("lin vel = [%f]\n",cmd_vel.linear.x);
+
     }
 
     void spin(){

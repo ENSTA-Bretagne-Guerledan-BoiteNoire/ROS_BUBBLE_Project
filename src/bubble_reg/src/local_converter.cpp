@@ -1,3 +1,4 @@
+#include <tf/transform_datatypes.h>
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/TimeReference.h"
@@ -5,7 +6,7 @@
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/TwistStamped.h"
 #include "geodesy/utility.h"
-//#include "tf/transform_datatypes.h"
+#include "tf/transform_datatypes.h"
 //#include <iostream>
 //#include <math.h>
 
@@ -27,12 +28,20 @@ public:
         pose.position.x = 0;
         pose.position.y = 0;
 
+        tf::Quaternion q = tf::createQuaternionFromRPY(0,0,0);
+        pose.orientation.z = q.z();
+        pose.orientation.w = q.w();
+        pose.orientation.x = q.x();
+        pose.orientation.y = q.y();
     }
 
     void updateGpsFix(const sensor_msgs::NavSatFix::ConstPtr& msg){
         pose.position.x = latDeg2meters(msg->latitude, latOrigin);
         pose.position.y = longDeg2meters(msg->longitude, latOrigin, longOrigin);
         pose.position.z = msg->altitude;
+	printf("I received an estimated position: ([%f], [%f], [%f])\n", msg->latitude, msg->longitude, msg->altitude);
+	printf("I received an estimated position: ([%f], [%f], [%f])\n", pose.position.x, pose.position.y, pose.position.z);
+
         ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", pose.position.x, pose.position.y, pose.position.z);
     }
 
@@ -80,8 +89,8 @@ private:
 
     // Internal variables
     geometry_msgs::Pose pose;
-    double latOrigin = 60;
-    double longOrigin = 0;
+    double latOrigin = 48.1990;
+    double longOrigin = -3.0137;
     float x, y, z;
     float theta;
 };

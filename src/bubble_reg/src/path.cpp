@@ -42,14 +42,17 @@ public:
         pose_real.orientation.x = q.x();
         pose_real.orientation.y = q.y();
 
-        researchPath = generateResPath("square",0,0,20,20);
-
-        std::cout << "Initialization done" << std::endl;
+        researchPath.xVec.push_back(2.0);  researchPath.yVec.push_back(2.0);
+        researchPath.xVec.push_back(-2.0); researchPath.yVec.push_back(-2.0);
+	researchPath.step = 0;
+        
+	std::cout << "Initialization done" << std::endl;
     }
 
     void updatePoseReal(const geometry_msgs::Pose::ConstPtr& msg){
         pose_real.orientation = msg->orientation;
         pose_real.position = msg->position;
+	printf("received : ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
         ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
     }
 
@@ -64,16 +67,19 @@ public:
     void updateCommand(){
         // Si on a atteint le prochain waypoint, on regarde si on a besoin de changer de cap
 
-
-
+	std::cout << "Assign xWp and yWp " << std::endl;
         const double xWp = researchPath.xVec[researchPath.step];
         const double yWp = researchPath.yVec[researchPath.step];
-        const double x = pose_real.position.x;
+	std::cout << "Assign x and y " << std::endl;        
+	const double x = pose_real.position.x;
         const double y = pose_real.position.y;
-
+	
+	std::cout << "Computing distance to waypoint " << std::endl;
         const double dist2Wp = sqrt( pow(xWp-x,2) + pow(yWp-y,2) );
 
         if( dist2Wp < 2 ){
+
+	          std::cout << "Waypoint harvested " << std::endl;
 
             line.prevWaypoint = line.nextWaypoint;
 
@@ -98,6 +104,7 @@ public:
 
             }
         }
+	std::cout << "Command updated " << std::endl;
     }
 
     void spin(){
@@ -107,15 +114,18 @@ public:
         while (ros::ok()){
 
             // call all waiting callbacks
-            ros::spinOnce();
-
+          
+            std::cout << "Spin once " << std::endl;
+	          ros::spinOnce();
 
             // publish the command
             if(cmd_state!=manual){
-
+		            std::cout << "Updating command " << std::endl;
                 updateCommand();
+		            std::cout << "Publishing line " << std::endl;
 
                 line_pub.publish(line);
+		            std::cout << "Line published " << std::endl;
             }
 
             loop.sleep();
@@ -199,6 +209,7 @@ int main(int argc, char **argv)
 
     Path path;
 
+    std::cout << "Node spinning " << std::endl;
     path.spin();
     return 0;
 }
