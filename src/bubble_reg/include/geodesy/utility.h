@@ -2,14 +2,16 @@
 // Created by tag on 28/02/17.
 //
 
-#include <math.h>
+#include <cmath>
+
+#define CONVERSION_FACTOR_GPS 1852.0 // in meters/min
 
 static double angle_deg(double a1,double a2){
-    return fmod( a1 + a2 + 180, 360 ) - 180;
+    return fmod( a1 + a2 + 3*180, 360 ) - 180;
 }
 
 static double angle_rad(double a1,double a2){
-    return fmod( a1 + a2 + M_PI, 2*M_PI ) - M_PI;
+    return (fmod( a1 + a2 + 3*M_PI, 2*M_PI ) - M_PI);
 }
 
 //static double enu2ned_yaw_rad(){
@@ -31,8 +33,7 @@ static double ned2enu_yaw_deg(double yaw){
  * @return
  */
 static double latDeg2meters(double latPos,double latOrigin){
-    const double earthPerimeter = 40075000; //m
-    return (latPos-latOrigin)/360*earthPerimeter;
+    return (latPos-latOrigin)*CONVERSION_FACTOR_GPS*60.0;
 }
 
 /**
@@ -43,10 +44,7 @@ static double latDeg2meters(double latPos,double latOrigin){
  * @return
  */
 static double longDeg2meters(double longPos,double latOrigin, double longOrigin){
-    const double earthPerimeter = 40030000; //m
-    const double Rterre = 6360000; //m
-    const double circlePerimeter = Rterre*cos(latOrigin/180*M_PI)*2*M_PI;
-    return (longPos-longOrigin)/360*circlePerimeter;
+    return (longPos-longOrigin)*CONVERSION_FACTOR_GPS*60.0*cos(latOrigin/180*M_PI);
 }
 
 static double distance(double x1, double y1, double x2, double y2){

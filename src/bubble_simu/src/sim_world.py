@@ -30,22 +30,25 @@ class world():
         self.boat = Boat(0,0,0,0,0,0)
 
     def updateT1(self, msg):
-        print 'received T1 : ',msg
-        self.boat.T1 = msg.data
+        print 'received TL : ',msg
+        self.boat.TL = msg.data
 
     def updateT2(self, msg):
-        print 'received T2 : ',msg
-        self.boat.T2 = msg.data
+        print 'received TR : ',msg
+        self.boat.TR = msg.data
 
     def updateWorld(self):
-        x,y,theta,v,delta = self.boat.move()
-        print 'dx : ',x,y,theta,v,delta
+        coeffFrot = 10
+        dx,dy,dtheta,dv = self.boat.move(coeffFrot)
+
+        # print 'dx : ',dx,dy,dtheta,dv
+
         self.boat.update(
-            self.boat.x     + x*self.dt,
-            self.boat.y     + y*self.dt,
-            self.boat.theta + theta*self.dt,
-            self.boat.v     + v*self.dt,
-            self.boat.delta + delta*self.dt
+            self.boat.x     + (dx    )*self.dt,
+            self.boat.y     + (dy    )*self.dt,
+            self.boat.theta + (dtheta)*self.dt,
+            self.boat.v     + (dv    )*self.dt,
+            dtheta
         )
 
 
@@ -57,7 +60,7 @@ class world():
 
             self.updateWorld()
 
-            print 'Pose : ', self.boat.pose
+            # print 'Pose : ', self.boat.pose
             # print 'self.boat.pose.orientation.x : ',self.boat.pose.orientation.x
             # print 'self.boat.pose.orientation.y : ',self.boat.pose.orientation.y
             # print 'self.boat.pose.orientation.z : ',self.boat.pose.orientation.z

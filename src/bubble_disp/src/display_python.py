@@ -4,6 +4,7 @@
 import rospy
 from geometry_msgs.msg import Pose
 from std_msgs.msg import Float32
+from bubble_msgs.msg import Line
 import numpy as np
 import matplotlib.pyplot as plt
 import tf.transformations as tf
@@ -16,11 +17,16 @@ class display():
         rospy.init_node('display_python')
 
         self.pose_sub = rospy.Subscriber('pose_est', Pose, self.updatePose)
+        self.pose_sub = rospy.Subscriber('line', Line, self.updateLine)
 
         # Data to display
         self.x = 0
         self.y = 0
         self.theta = 0
+        self.line1x = 0.0
+        self.line1y = 0.0
+        self.line2x = 0.0
+        self.line2y = 0.0
 
         # trace
         self.xt, self.yt, self.thetat = [], [], []
@@ -40,6 +46,13 @@ class display():
         (roll,pitch,yaw) = tf.euler_from_quaternion(quaternion)
         self.theta = yaw
 
+    def updateLine(self, msg):
+        print "Received line : ",msg
+        self.line1x = msg.prevWaypoint.x
+        self.line1y = msg.prevWaypoint.y
+        self.line2x = msg.nextWaypoint.x
+        self.line2y = msg.nextWaypoint.y
+
     def update_trace(self):
         MAX_SIZE = 500
         self.xt.append(self.x)
@@ -54,8 +67,8 @@ class display():
 
     def draw_boat(self):
         # Original
-        hull = np.array([[-1,  5,  7, 7, 5, -1, -1, -1],
-                         [-2, -2, -1, 1, 2,  2, -2, -2],
+        hull = np.array([[-0.1,  0.5,  0.7, 0.7, 0.5, -0.1, -0.1, -0.1],
+                         [-0.2, -0.2, -0.1, 0.1, 0.2,  0.2, -0.2, -0.2],
                          [ 1,  1,  1, 1, 1,  1,  1,  1]])
         # Rotation matrix
         R = np.array([[np.cos(self.theta), -np.sin(self.theta), self.x],
@@ -90,6 +103,11 @@ class display():
             print "====== Plotting boat"
             hull = self.draw_boat()
             plt.plot(hull[0], hull[1], 'k', linewidth=2)
+            
+	    print "====== Plotting Line"
+	    plt.plot([self.line1x,self.line2x],[self.line1y,self.line2y],'r', linewidth=2)
+	    plt.plot([self.x,self.line1x],[self.y,self.line1y],'r', linewidth=2)
+	
 
             plt.axis([self.x - 150, self.x + 150, self.y - 150, self.y + 150])
             plt.axis('equal')
