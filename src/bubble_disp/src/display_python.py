@@ -104,10 +104,10 @@ class display():
             hull = self.draw_boat()
             plt.plot(hull[0], hull[1], 'k', linewidth=2)
             
-	    print "====== Plotting Line"
-	    plt.plot([self.line1x,self.line2x],[self.line1y,self.line2y],'r', linewidth=2)
-	    plt.plot([self.x,self.line1x],[self.y,self.line1y],'r', linewidth=2)
-	
+    	      print "====== Plotting Line"
+	          plt.plot([self.line1x,self.line2x],[self.line1y,self.line2y],'r', linewidth=2)
+	          plt.plot([self.x,self.line1x],[self.y,self.line1y],'r', linewidth=2)
+
 
             plt.axis([self.x - 150, self.x + 150, self.y - 150, self.y + 150])
             plt.axis('equal')

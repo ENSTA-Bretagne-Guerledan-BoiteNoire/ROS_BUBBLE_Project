@@ -79,7 +79,7 @@ public:
 
         if( dist2Wp < 2 ){
 
-	    std::cout << "Waypoint harvested " << std::endl;
+	          std::cout << "Waypoint harvested " << std::endl;
 
             line.prevWaypoint = line.nextWaypoint;
 
@@ -114,16 +114,18 @@ public:
         while (ros::ok()){
 
             // call all waiting callbacks
+          
             std::cout << "Spin once " << std::endl;
-	    ros::spinOnce();
+	          ros::spinOnce();
 
             // publish the command
             if(cmd_state!=manual){
-		std::cout << "Updating command " << std::endl;
+		            std::cout << "Updating command " << std::endl;
                 updateCommand();
-		std::cout << "Publishing line " << std::endl;
+		            std::cout << "Publishing line " << std::endl;
+
                 line_pub.publish(line);
-		std::cout << "Line published " << std::endl;
+		            std::cout << "Line published " << std::endl;
             }
 
             loop.sleep();
