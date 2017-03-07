@@ -22,7 +22,7 @@ public:
         // Subscribers
         poseReal_sub = node.subscribe("pose_est", 1, &Regulation::updatePoseReal, this);
         twistReal_sub = node.subscribe("twist_est", 1, &Regulation::updateTwistReal, this);
-        obj_sub = node.subscribe("objective", 1, &Regulation::updateObj, this);
+        obj_sub = node.subscribe("line", 1, &Regulation::updateFollowedLine, this);
         cmdState_sub = node.subscribe("cmd_state", 1, &Regulation::updateCmdState, this);
 
         // Publishers
@@ -69,7 +69,7 @@ public:
         twist_real.linear = msg->linear;
     }
 
-    void updateObj(const bubble_msgs::Line::ConstPtr& msg){
+    void updateFollowedLine(const bubble_msgs::Line::ConstPtr& msg){
         followedLine.nextWaypoint = msg->nextWaypoint;
         followedLine.prevWaypoint = msg->prevWaypoint;
     }
@@ -80,25 +80,76 @@ public:
 
     void updateCommand(){
 
-        const double ax = followedLine.prevWaypoint.x;
-        const double ay = followedLine.prevWaypoint.y;
-        const double bx = followedLine.nextWaypoint.x;
-        const double by = followedLine.nextWaypoint.y;
+
+
+        double ax = followedLine.prevWaypoint.x;
+        printf("ax = [%f]\n",ax);
+        double ay = followedLine.prevWaypoint.y;
+        printf("ay = [%f]\n",ay);
+        double bx = followedLine.nextWaypoint.x;
+        printf("bx = [%f]\n",bx);
+        double by = followedLine.nextWaypoint.y;
+        printf("by = [%f]\n",by);
         const double x = pose_real.position.x;
+        printf("x = [%f]\n",x);
         const double y = pose_real.position.y;
-        const double head = ned2enu_yaw_rad(tf::getYaw(pose_real.orientation));
+        printf("y = [%f]\n",y);
 
-        const double headLine = atan2(by-ay,bx-ax); // ENU convention
-        const double penteLine = (ay-by)/(ax-bx);
-        const double offsetLine = ay - penteLine*ax;
-        const double dist2Line = fabs(penteLine*x + y + offsetLine)/sqrt( pow(x,2) + pow(y,2) );
-        const double wantedHead = angle_rad(headLine,- atan(dist2Line));
+//        const double head = ned2enu_yaw_rad(tf::getYaw(pose_real.orientation));
+        double head = tf::getYaw(pose_real.orientation);
+        printf("head = [%f]\n",head);
 
-        const double twist = angle_rad(wantedHead,- head)/2.0;
+        double headLine = atan2(by-ay,bx-ax); // ENU convention
+        printf("headLine = [%f]\n",headLine);
+
+        // Si le bateau dépasse la ligne
+        const double angleNextWp2Boat = atan2(y-by,x-bx);
+        printf("angleNextWp2Boat = [%f]\n",angleNextWp2Boat);
+        printf("angle_rad(angleNextWp2Boat,-headLine) = [%f]\n",angle_rad(angleNextWp2Boat,-headLine));
+        if(fabs(angle_rad(angleNextWp2Boat,-headLine))<M_PI/2.0){
+
+            printf("===================== Inverting WayPoints\n");
+
+            const double tmpx = ax;
+            const double tmpy = ay;
+            ax = bx;
+            ay = by;
+            bx = tmpx;
+            by = tmpy;
+
+            headLine = atan2(by-ay,bx-ax); // ENU convention
+        }
+
+        double dist2Line;
+        if( sqrt( pow(bx-ax,2) + pow(bx-ax,2)) != 0){
+            dist2Line = ((bx-ax)*(y-ay) - (by-ay)*(x-ax)) / sqrt( pow(bx-ax,2) + pow(bx-ax,2));
+        } else{ dist2Line = 100; }
+
+        printf("dist2Line = [%f]\n",dist2Line);
+
+        const double error = - atan(dist2Line);
+        printf("headLine = [%f]\n", headLine);
+        printf("error = [%f]\n", error);
+        printf("headLine - atan(dist2Line) = [%f]\n", headLine - atan(dist2Line));
+        printf("headLine - error = [%f]\n", headLine + error);
+
+        const double wantedHead = angle_rad(headLine, error);
+//        const double wantedHead = atan(tan(headLine - atan(dist2Line)));
+        printf("wantedHead = [%f]\n", wantedHead);
+
+        const double twist = angle_rad( wantedHead,- head)/2.0;
+        printf("twist = [%f]\n",twist);
+
         const double dist2Obj = distance(x,y,bx,by);
+        printf("dist2Obj = [%f]\n",dist2Obj);
+
+        const double brakeDist = 6;
+
+        printf("lin vel = [%f]\n",atan(1/brakeDist*dist2Obj));
 
         cmd_vel.angular.z = twist;
-        cmd_vel.linear.x = atan(1*dist2Obj); // Le *1 c'est pour que le bateau ralentisse à 1/1m
+//        cmd_vel.linear.x = atan(1/brakeDist*dist2Obj); // Le 1/1* c'est pour que le bateau ralentisse à 1m
+        cmd_vel.linear.x = 1 - fabs(angle_rad(headLine,- head))/M_PI; // Le bateau ralenti si il n'est pas en face de la ligne
     }
 
     void spin(){

@@ -7,15 +7,20 @@ import tf.transformations as tf
 
 class Boat():
 
-    def __init__(self,x=0,y=0,theta=0,v=0,delta=0,T1=0,T2=0):
+    def __init__(self,x=0,y=0,theta=0,v=0,delta=0,TL=0,TR=0):
         self.x = x
         self.y = y
         self.theta = theta
         self.v = v
         self.delta = delta
 
-        self.T1 = T1
-        self.T2 = T2
+        self.TL = TL
+        self.TR = TR
+
+        self.coeffMotor = 5
+        self.distMotor = 0.3
+        self.mass = 10
+        self.inertieRot = 100
 
         self.pose = Pose()
         self.twist = Twist()
@@ -36,20 +41,22 @@ class Boat():
         self.twist.linear.z = 0
 
 
-    def move(boat):
-        print 'prev T1 :',boat.T1
-        print 'prev T2 :',boat.T2
+    def move(boat,coeffFrot):
+        print 'prev TL :',boat.TL
+        print 'prev TR :',boat.TR
         print 'prev v :',boat.v
+
+        # on repart
+
 
         # Dans un repère absolu
 
-        x = boat.v * np.cos(boat.theta)
-        y = boat.v * np.sin(boat.theta)
-        theta = boat.v*boat.T1
-        v = -(boat.T1 + np.sin(boat.delta))*boat.T2 - boat.v
-        delta = -boat.v*(boat.T1 + np.sin(boat.delta))
+        dx = boat.v * np.cos(boat.theta)
+        dy = boat.v * np.sin(boat.theta)
+        dtheta = (boat.TL-boat.TR)*boat.coeffMotor/boat.distMotor/boat.inertieRot
+        dv = ((boat.TL+boat.TR)*boat.coeffMotor - coeffFrot*boat.v)/boat.mass
 
-        return x,y,theta,v,delta
+        return dx,dy,dtheta,dv
 
 
     def update(self,x,y,theta,v,delta):

@@ -64,6 +64,8 @@ public:
     void updateCommand(){
         // Si on a atteint le prochain waypoint, on regarde si on a besoin de changer de cap
 
+
+
         const double xWp = researchPath.xVec[researchPath.step];
         const double yWp = researchPath.yVec[researchPath.step];
         const double x = pose_real.position.x;
@@ -72,6 +74,8 @@ public:
         const double dist2Wp = sqrt( pow(xWp-x,2) + pow(yWp-y,2) );
 
         if( dist2Wp < 2 ){
+
+            line.prevWaypoint = line.nextWaypoint;
 
             if(angle_ping==-180){
 
@@ -93,8 +97,6 @@ public:
                 line.nextWaypoint.y = pose_real.position.y + dist*sin(angle_rad(angle_ping,+ cap));
 
             }
-
-            line.prevWaypoint = line.nextWaypoint;
         }
     }
 
@@ -107,10 +109,12 @@ public:
             // call all waiting callbacks
             ros::spinOnce();
 
-            updateCommand();
 
             // publish the command
             if(cmd_state!=manual){
+
+                updateCommand();
+
                 line_pub.publish(line);
             }
 
@@ -150,17 +154,19 @@ private:
 
         //Init
         ResearchPath resPath = Path::ResearchPath();
-        int pathXLen = (int) floor(xLen / 2);
-        int pathYLen = (int) floor(yLen / 2);
+        const int squareLength = 4;
+        int pathXLen = (int) floor(xLen / squareLength);
+        int pathYLen = (int) floor(yLen / squareLength);
+
 
         //Square
         if(shape=="square"){
             for (int i = 0; i < pathYLen; ++i) {
-                int yCoord = 2*i;
+                int yCoord = squareLength*i;
 
                 if(fmod(i, 2) == 0){
                     for (int j = 0; j < pathXLen; ++j) {
-                        int xCoord = 2*j;
+                        int xCoord = squareLength*j;
 
                         resPath.xVec.push_back(xIni+xCoord);
                         resPath.yVec.push_back(yIni+yCoord);
@@ -168,7 +174,7 @@ private:
                 }
                 else{
                     for (int j = pathXLen; j > 0; --j) {
-                        int xCoord = 2*j;
+                        int xCoord = squareLength*j;
 
                         resPath.xVec.push_back(xIni+xCoord);
                         resPath.yVec.push_back(yIni+yCoord);

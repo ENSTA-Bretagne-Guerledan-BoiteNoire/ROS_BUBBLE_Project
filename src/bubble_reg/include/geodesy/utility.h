@@ -2,14 +2,18 @@
 // Created by tag on 28/02/17.
 //
 
-#include <math.h>
+#include <cmath>
 
 static double angle_deg(double a1,double a2){
-    return fmod( a1 + a2 + 180, 360 ) - 180;
+    return fmod( a1 + a2 + 3*180, 360 ) - 180;
 }
 
 static double angle_rad(double a1,double a2){
-    return fmod( a1 + a2 + M_PI, 2*M_PI ) - M_PI;
+    return (fmod( a1 + a2 + 3*M_PI, 2*M_PI ) - M_PI);
+}
+
+static double angle_rad_lol(double a1,double a2){
+    return fmod( a1 + a2 + 3*M_PI, 2*M_PI ) - M_PI;
 }
 
 //static double enu2ned_yaw_rad(){
