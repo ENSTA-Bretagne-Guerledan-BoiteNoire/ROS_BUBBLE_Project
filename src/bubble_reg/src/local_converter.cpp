@@ -1,3 +1,4 @@
+#include <tf/transform_datatypes.h>
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/TimeReference.h"
@@ -5,7 +6,7 @@
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/TwistStamped.h"
 #include "geodesy/utility.h"
-//#include "tf/transform_datatypes.h"
+#include "tf/transform_datatypes.h"
 //#include <iostream>
 //#include <math.h>
 
@@ -27,6 +28,11 @@ public:
         pose.position.x = 0;
         pose.position.y = 0;
 
+        tf::Quaternion q = tf::createQuaternionFromRPY(0,0,0);
+        pose.orientation.z = q.z();
+        pose.orientation.w = q.w();
+        pose.orientation.x = q.x();
+        pose.orientation.y = q.y();
     }
 
     void updateGpsFix(const sensor_msgs::NavSatFix::ConstPtr& msg){

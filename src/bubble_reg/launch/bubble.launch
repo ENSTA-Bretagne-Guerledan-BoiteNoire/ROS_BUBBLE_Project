@@ -1,16 +1,20 @@
 <launch>
 
     <group ns="barge">
+        <remap from="pose_real" to="pose_est"/>
 
+        <!-- Man inputs -->
         <node pkg="bubble_man_inputs" name="key_listener" type="key_listener.py"/>
         <node pkg="bubble_man_inputs" name="key_interpreter" type="key_interpreter.py"/>
 
+        <!-- Regulation -->
         <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py"/>
-        <node pkg="bubble_reg" name="driver_maestro" type="driver_maestro.py"/>
-
         <node pkg="bubble_reg" name="regulation" type="regulation"/>
-        <node pkg="bubble_reg" name="map_handler" type="map_handler"/>
+        <node pkg="bubble_reg" name="local_converter" type="local_converter"/>
+        <node pkg="bubble_reg" name="path" type="path"/>
 
+        <!-- Drivers -->
+        <node pkg="bubble_reg" name="driver_maestro" type="driver_maestro.py"/>
         <group ns="gps">
             <node pkg="nmea_navsat_driver" name="gps_driver" type="nmea_serial_driver">
                     <param name="port" value="/dev/ttyUSB1"/>
