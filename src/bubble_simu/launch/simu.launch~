@@ -4,8 +4,8 @@
 
         <remap from="pose_real" to="pose_est"/>
 
-        <node pkg="bubble_man_inputs" name="key_listener" type="key_listener.py"/>
-        <node pkg="bubble_man_inputs" name="key_interpreter" type="key_interpreter.py"/>
+        <node pkg="bubble_man_inputs" name="key_listener" type="key_listener2.py"/>
+        <node pkg="bubble_man_inputs" name="key_interpreter" type="key_interpreter2.py"/>
 
         <node pkg="bubble_reg" name="path" type="path"/>
         <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py"/>

@@ -3,7 +3,7 @@
 Clone this as a new ros workspace
 
 Global dependencies :  
-`sudo pip install numpy`  
+`sudo pip install numpy`    
 
 Packages : 
  - nmea_navsat_driver  
@@ -19,3 +19,6 @@ Packages :
 	`sudo pip install scipy`  
 	`sudo pip install pyaudio`  
 	
+
+### Troubleshooting
+ - If the downloading of razor package fails, then follows `http://wiki.ros.org/razor_imu_9dof` to build the package

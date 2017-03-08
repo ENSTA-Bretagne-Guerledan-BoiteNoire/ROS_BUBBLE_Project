@@ -80,6 +80,7 @@ public:
 
     void updateCommand(){
 
+
         printf(" --== Updating command ==-- \n");
 
         double ax = followedLine.prevWaypoint.x;
@@ -139,13 +140,13 @@ public:
 
         const double twist = angle_rad( wantedHead,- head)/2.0;
         cmd_vel.angular.z = twist;
-        printf("twist = [%f]\n",twist);
 
 //        cmd_vel.linear.x = atan(1/brakeDist*dist2Obj); // Le 1/1* c'est pour que le bateau ralentisse à 1m
         const double cmdLin = fabs(angle_rad(headLine,- head)); // Le bateau ralenti si il n'est pas en face de la ligne
         const double tau = 5.0;
         cmd_vel.linear.x = exp(-tau/M_PI*cmdLin)-exp(-tau);
         printf("lin vel = [%f]\n",cmd_vel.linear.x);
+
     }
 
     void spin(){

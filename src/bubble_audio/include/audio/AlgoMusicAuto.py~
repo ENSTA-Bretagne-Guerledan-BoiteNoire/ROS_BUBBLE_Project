@@ -1,56 +1,23 @@
-import wave
 import scipy.io.wavfile as sciwave
 from scipy.fftpack import fft
 import math
 import numpy as np
-import pyaudio
-import pylab
+import RecPing
 import time
-import soundProcessing as sp
-#recPing
+import pylab
+import audio as sp
 
-def recPing(WAVE_OUTPUT_FILENAME): #enregistre sous le nom "son.wav" 1 seconde de l'entree micro
-    CHUNK = 1024
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 2
-    RATE = 44100
-    RECORD_SECONDS = 5
+# ========= (1) ENREGISTREMENT ==========
 
-    p = pyaudio.PyAudio()
+filename = time.strftime("%d%b%Y_%H%M%S.wav")  # titre du fichier = date
+RecPing.recPing(filename)  # enregistrement
 
-    stream = p.open(format=FORMAT,
-                    channels=CHANNELS,
-                    rate=RATE,
-                    input=True,
-                    frames_per_buffer=CHUNK)
-
-    print("* recording")
-
-    frames = []
-
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        frames.append(data)
-
-    print("* done recording")
-
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-
-    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(p.get_sample_size(FORMAT))
-    wf.setframerate(RATE)
-    wf.writeframes(b''.join(frames))
-    wf.close()
 # ========= (2) RECEIVED SIGNAL =========
-filename = time.strftime("%d%b%Y_%H%M%S.wav") #titre du fichier = date
-recPing(filename)                             #enregistrement
+
 Fs, a = sciwave.read(filename)
 a = np.array(a)
-a=a*50
-a=sp.butter_bandpass_filter(a, 4500, 5500, Fs, order=5)
+a = a*50
+a = sp.butter_bandpass_filter(a, 4500, 5500, Fs, order=5)
 a = a / (2.0**15 - 1.0)     # Normalisation des donnees (valeurs sur 16 bits)
 
 ####### Parametres modifiables ###
@@ -60,7 +27,7 @@ N = 2;                       # Number of microphones(on doit avoir M <= N - 1)
 dist = .08;                  # Distance between adjacent microphones(en m)
 # c = 346.287;               # Speed of sound in air(en m/s)
 c = 1500;                    # Speed of sound in water
-f = 5000;                   # Signal frequency(en Hz)
+f = 15000;                   # Signal frequency(en Hz)
 
 lfft = 1024 * 1;             # Number of data points for FFT in a snapshot
 K = math.floor(np.size(a[:,0]) / lfft); # Number of frequency snapshots(multiple of lfft)
@@ -84,6 +51,7 @@ for ih in range (0,int(N)):
         X[:,ih,iv]=fft(tmp);
 
 
+
 # Find the closest frequency from the discrete frequency vector resulted from FFT
 values=abs(F-f);
 mf=np.amin(values);
@@ -94,8 +62,6 @@ x0=np.zeros((int(N), int(K)),dtype='complex');
 for ih in range (0,int(N)):
     for iv in range (0,int(K)):
         x0[ih,iv]=X[mi,ih,iv]; # signal complexe
-
-## Common parameters for all algo
 
 # Sample covariance matrix
 Rxx = np.dot(x0,x0.conj().T)/L;
@@ -109,19 +75,6 @@ ElSearch = np.zeros(AzSearch.shape); # Simple 1D example
 kSearch = math.pi*np.array([np.cos(np.radians(AzSearch))*np.cos(np.radians(ElSearch)), np.sin(np.radians(AzSearch))*np.cos(np.radians(ElSearch)), np.sin(np.radians(ElSearch))]);
 ASearch = np.exp(-1j*np.dot(r,kSearch));
 
-###############################################################################################################
-## Bartlett or Conventional Beamforming
-
-#Bartlett spectrum
-Zbf=[]
-for i in range (0,np.size(AzSearch)):
-    Z=(ASearch[:,i].conj().T).dot(Rxx).dot(ASearch[:,i]);
-    Zbf.append(abs(Z));
-
-pylab.figure()
-Zbf = 10*np.log10(Zbf/max(Zbf))
-pylab.plot(AzSearch,Zbf)
-
 #################################################################################################################
 ## Capon
 
@@ -131,8 +84,6 @@ for i in range (0,np.size(AzSearch)):
     Z=(ASearch[:,i].conj().T).dot(np.linalg.inv(Rxx)).dot(ASearch[:,i]);
     Zc.append(abs(1/Z));
 Zc = 10*np.log10(Zc/max(Zc))
-pylab.plot(AzSearch,Zc)
-
 
 ##################################################################################################################
 ## MUSIC
@@ -155,5 +106,24 @@ for i in range (0,np.size(AzSearch)):
     Zm.append(abs(1/Z));
 
 Zm = 10*np.log10(Zm/max(Zm))
-pylab.plot(AzSearch,Zm)
-pylab.show()
+
+
+# Angle calculation
+Zcmin=np.amin(Zc);
+Zcmax=np.amax(Zc);
+Zmi=np.argmax(Zm);
+
+# Amplitude detection Capon pour savoir si on a une fausse detection
+if (abs(Zcmax-Zcmin)<1):
+    angle=-180
+    print("Source not detected")
+# Position pic MUSIC pour determiner localisation source detectee
+else:
+    angle = AzSearch[Zmi];
+    print("Angle  :", angle )
+
+# Plot spectrum
+#pylab.figure()
+#pylab.plot(AzSearch,Zc)
+#pylab.plot(AzSearch,Zm)
+#pylab.show()

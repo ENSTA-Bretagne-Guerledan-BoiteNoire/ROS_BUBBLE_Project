@@ -18,8 +18,8 @@ class world():
         rospy.init_node('display_python')
 
         # Subscriber
-        self.TL_sub = rospy.Subscriber('commandT2', Float32, self.updateTL)
-        self.TR_sub = rospy.Subscriber('commandT1', Float32, self.updateTR)
+        self.TL_sub = rospy.Subscriber('commandT1', Float32, self.updateTL)
+        self.TR_sub = rospy.Subscriber('commandT2', Float32, self.updateTR)
 
         # Publisher
         self.pose_pub = rospy.Publisher('pose_real', Pose, queue_size=1)

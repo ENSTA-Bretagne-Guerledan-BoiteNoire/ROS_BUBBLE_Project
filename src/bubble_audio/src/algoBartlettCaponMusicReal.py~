@@ -5,7 +5,6 @@ import math
 import numpy as np
 import pyaudio
 import pylab
-import time
 import soundProcessing as sp
 #recPing
 

@@ -18,7 +18,7 @@ public:
         gpsFix_sub = node.subscribe("gps/fix", 1, &Map::updateGpsFix, this);
 //        gpsVel_sub = node.subscribe("gps/vel", 1, &Map::updateGpsVel, this);
 //        timeRef_sub = node.subscribe("gps/time_reference", 1, &Map::updateTimeRef, this);
-        imu_sub = node.subscribe("imu/imu", 1, &Map::updateImu, this);
+        imu_sub = node.subscribe("imu", 1, &Map::updateImu, this);
 
         // Publishers
         pose_pub = node.advertise<geometry_msgs::Pose>("pose_est", 1);
@@ -39,9 +39,6 @@ public:
         pose.position.x = latDeg2meters(msg->latitude, latOrigin);
         pose.position.y = longDeg2meters(msg->longitude, latOrigin, longOrigin);
         pose.position.z = msg->altitude;
-	printf("I received an estimated position: ([%f], [%f], [%f])\n", msg->latitude, msg->longitude, msg->altitude);
-	printf("I received an estimated position: ([%f], [%f], [%f])\n", pose.position.x, pose.position.y, pose.position.z);
-
         ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", pose.position.x, pose.position.y, pose.position.z);
     }
 
@@ -89,8 +86,8 @@ private:
 
     // Internal variables
     geometry_msgs::Pose pose;
-    double latOrigin = 48.1990;
-    double longOrigin = -3.0137;
+    double latOrigin = 60;
+    double longOrigin = 0;
     float x, y, z;
     float theta;
 };
