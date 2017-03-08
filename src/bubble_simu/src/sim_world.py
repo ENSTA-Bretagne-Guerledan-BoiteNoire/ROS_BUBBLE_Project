@@ -18,8 +18,8 @@ class world():
         rospy.init_node('display_python')
 
         # Subscriber
-        self.T1_sub = rospy.Subscriber('commandT1', Float32, self.updateT1)
-        self.T2_sub = rospy.Subscriber('commandT2', Float32, self.updateT2)
+        self.TL_sub = rospy.Subscriber('commandT2', Float32, self.updateTL)
+        self.TR_sub = rospy.Subscriber('commandT1', Float32, self.updateTR)
 
         # Publisher
         self.pose_pub = rospy.Publisher('pose_real', Pose, queue_size=1)
@@ -29,11 +29,11 @@ class world():
         self.dt = 0.1
         self.boat = Boat(0,0,0,0,0,0)
 
-    def updateT1(self, msg):
+    def updateTL(self, msg):
         print 'received TL : ',msg
         self.boat.TL = msg.data
 
-    def updateT2(self, msg):
+    def updateTR(self, msg):
         print 'received TR : ',msg
         self.boat.TR = msg.data
 

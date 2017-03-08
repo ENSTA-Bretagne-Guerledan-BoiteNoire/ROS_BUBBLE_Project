@@ -27,38 +27,57 @@ class key_interpreter():
         self.stateMap = {'manual' : 0,
                          'linefollowing' : 1,
                          'stationkeeping' : 2}
-        self.state = 'manual'
+        self.state = self.stateMap['manual']
 
         self.slowRate = 5 # en pourdixmille diminué à chaque pas
 
     def keys_cb(self,msg, twist_pub):
 
-        if len(msg.data) == 0 or not self.key_mapping.has_key(msg.data[0]):
+        if len(msg.data) == 0 or not self.key_mapping.has_key(msg.data):
+	    print 'len(msg.data) == 0 : ',len(msg.data) == 0
+	    print 'self.key_mapping.has_key(msg.data) : ',self.key_mapping.has_key(msg.data)
+	    print 'unknown key : ',msg.data
             return # unknown key
 
-        vals = self.key_mapping[msg.data[0]]
+        vals = self.key_mapping[msg.data]
+	if msg.data!='NoInputReceived':
+	    print "received mgs.data : ",msg.data
+	    print 'vals : ',vals
 
         # Gestion des entr�es
         if isinstance(vals[0],int):
-            self.angCmd += vals[0]/200
-            self.linCmd += vals[1]/200
-            self.angCmd = min(max(self.angCmd, 1), -1)
-            self.linCmd = min(max(self.linCmd, 1), -1)
+
+            self.angCmd = vals[0]
+            self.linCmd += vals[1]/20.0
+	    print 'self.angCmd : ',self.angCmd
+	    print 'self.linCmd : ',self.linCmd
+
+	    print 'self.linCmd : ',self.linCmd
+	    print 'self.angCmd : ',self.angCmd
+	    
         elif vals[0]=='STOP':
             self.angCmd = 0
             self.linCmd = 0
         elif vals[0]=='SLOW':
-            self.angCmd *= 1-self.slowRate/10000
-            self.linCmd *= 1-self.slowRate/10000
+            self.angCmd *= 1-self.slowRate/100.0
+            #self.linCmd *= 1-self.slowRate/100.0
+
+	    print 'Slowing self.angCmd : ',1-self.slowRate/100.0,'/',self.angCmd
+	    #print 'Slowing self.linCmd : ',1-self.slowRate/100.0,'/',self.linCmd
+
         elif vals[0]=='BACK':
-            self.angCmd = min(max(self.angCmd/abs(self.angCmd), 1), -1)
-            self.linCmd = min(max(self.linCmd/abs(self.linCmd), 1), -1)
+	    if self.angCmd != 0:
+            	self.angCmd = max(min( -self.angCmd/abs(self.angCmd) , 1), -1)
+            if self.linCmd != 0:
+	        self.linCmd = max(min( -self.linCmd/abs(self.linCmd) , 1), -1)
 
 
         elif vals[0]=='s':
             self.state = self.stateMap[ vals[1] ]
             print 'cmd state : ',vals[1]
 
+	self.angCmd = max(min(self.angCmd, 1), -1)
+        self.linCmd = max(min(self.linCmd, 1), -1)
 
         # Creation du message twist
         print 'cmd motors :  angular[',self.angCmd,'] / linear[',self.linCmd,']'
