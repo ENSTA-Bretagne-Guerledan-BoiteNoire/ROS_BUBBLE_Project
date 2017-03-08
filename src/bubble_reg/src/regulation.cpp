@@ -78,10 +78,7 @@ public:
         cmd_state = msg->data;
     }
 
-    void updateCommand(){
-
-
-        printf(" --== Updating command ==-- \n");
+    void lineFollow(){
 
         double ax = followedLine.prevWaypoint.x;
         printf("ax = [%f]\n",ax);
@@ -146,6 +143,21 @@ public:
         const double tau = 5.0;
         cmd_vel.linear.x = exp(-tau/M_PI*cmdLin)-exp(-tau);
         printf("lin vel = [%f]\n",cmd_vel.linear.x);
+
+    }
+
+    void stationKeep(){
+
+    }
+
+    void updateCommand(){
+        printf(" --== Updating command ==-- \n");
+
+        if(cmd_state==blackBoxResearch){
+            lineFollow();
+        } else if(cmd_state==stationKeeping){
+            stationKeep();
+        }
 
     }
 
