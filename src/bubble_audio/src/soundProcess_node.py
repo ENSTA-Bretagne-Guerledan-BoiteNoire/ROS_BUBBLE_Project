@@ -2,8 +2,9 @@
 # coding=utf-8
 
 import rospy
-from std_msgs.msg import Float32, Int8
+from std_msgs.msg import Float64, Int8
 from audio.AlgoMusicAuto import process
+import numpy as np
 
 # 1 = Left
 # 2 = Right
@@ -13,7 +14,7 @@ class soundProcess():
         rospy.init_node('display_python')
 
         # Publisher
-        self.angle_pub = rospy.Publisher('angle_ping', Float32, queue_size=1)
+        self.angle_pub = rospy.Publisher('angle_ping', Float64, queue_size=1)
         self.cmdState_pub = rospy.Publisher('cmd_state', Int8, queue_size=1)
 
         # Subscriber
@@ -36,13 +37,17 @@ class soundProcess():
 
         while not rospy.is_shutdown():
 
+            print 'State : ',self.state
             if self.state!=self.stateMap['manual']:
+                print 'Publishing state : ',self.stateMap['stationkeeping']
                 self.cmdState_pub.publish(self.stateMap['stationkeeping'])
-
-                self.angle = process() # Blocking operation
+                print 'Processing'
+                self.angle = (process()-90)/180*np.pi # Blocking operation
+                print 'Publishing angle : ',self.angle
                 self.angle_pub.publish(self.angle)
 
             if self.state!=self.stateMap['manual']:
+                print 'Publishing state : ',self.stateMap['linefollowing']
                 self.cmdState_pub.publish(self.stateMap['linefollowing'])
 
             rate.sleep()

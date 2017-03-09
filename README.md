@@ -1,5 +1,22 @@
 # ROS_BUBBLE_Project
 
+### Launch
+
+```
+cd ~/ROS_ws_Guerledan_BUBBLE
+ros-make-project # C'est un alias de catkin_make && source devel/setub.bash && chmod -R u-x . 
+``` 
+
+Pour lancer la simu
+
+`roslaunch bubble_simu simu2.launch`
+
+Pour lancer la regulation
+
+`roslaunch bubble_reg bubble2.launch`
+
+### Install
+
 Clone this as a new ros workspace
 
 Global dependencies :  
