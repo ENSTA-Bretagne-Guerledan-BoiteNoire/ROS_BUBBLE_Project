@@ -9,12 +9,12 @@ from geometry_msgs.msg import Twist
 class key_interpreter():
     def __init__(self):
         self.key_mapping = {'z': [0, 1], 's': [0, -1],
-                            'q': [-1, 0], 'd': [1, 0],
+                            'q': [1, 0], 'd': [-1, 0],
                             ' ': ['STOP', 'STOP'],
                             'r': ['BACK', 'BACK'],
 
                             '8': [0, -1], '2': [0, 1],
-                            '4': [-1, 0], '6': [1, 0],
+                            '4': [1, 0], '6': [-1, 0],
                             '5': ['STOP', 'STOP'],
                             '0': ['BACK', 'BACK'],
                             'NoInputReceived': ['SLOW', 'SLOW'],
@@ -76,23 +76,25 @@ class key_interpreter():
             self.state = self.stateMap[vals[1]]
             print 'cmd state : ', vals[1]
 
-        self.angCmd = max(min(self.angCmd, 1), -1)
-        self.linCmd = max(min(self.linCmd, 1), -1)
+        if self.state==self.stateMap['manual']:
+            self.angCmd = max(min(self.angCmd, 1), -1)
+            self.linCmd = max(min(self.linCmd, 1), -1)
 
-        # Creation du message twist
-        print 'cmd motors :  angular[', self.angCmd, '] / linear[', self.linCmd, ']'
-        t = Twist()
+            # Creation du message twist
+            print 'cmd motors :  angular[', self.angCmd, '] / linear[', self.linCmd, ']'
+            t = Twist()
 
-        t.angular.x = 0
-        t.angular.y = 0
-        t.angular.z = self.angCmd
+            t.angular.x = 0
+            t.angular.y = 0
+            t.angular.z = self.angCmd
 
-        t.linear.x = self.linCmd
-        t.linear.y = 0
-        t.linear.z = 0
+            t.linear.x = self.linCmd
+            t.linear.y = 0
+            t.linear.z = 0
 
-        # Publish
-        twist_pub.publish(t)
+            # Publish
+            twist_pub.publish(t)
+
         state_pub.publish(self.state)
 
 

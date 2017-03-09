@@ -93,8 +93,8 @@ public:
         const double y = pose_real.position.y;
         printf("y = [%f]\n",y);
 
-//        const double head = ned2enu_yaw_rad(tf::getYaw(pose_real.orientation));
-        double head = tf::getYaw(pose_real.orientation);
+        const double head = ned2enu_yaw_rad(tf::getYaw(pose_real.orientation));
+//        double head = tf::getYaw(pose_real.orientation);
         printf("head = [%f]\n",head);
 
         double headLine = atan2(by-ay,bx-ax); // ENU convention
@@ -128,7 +128,6 @@ public:
         const double error = - atan(dist2Line);
         printf("headLine = [%f]\n", headLine);
         printf("error = [%f]\n", error);
-        printf("headLine - atan(dist2Line) = [%f]\n", headLine - atan(dist2Line));
         printf("headLine - error = [%f]\n", headLine + error);
 
         const double wantedHead = angle_rad(headLine, error);
@@ -137,6 +136,7 @@ public:
 
         const double twist = angle_rad( wantedHead,- head)/2.0;
         cmd_vel.angular.z = twist;
+        printf("twist = [%f]\n",twist);
 
 //        cmd_vel.linear.x = atan(1/brakeDist*dist2Obj); // Le 1/1* c'est pour que le bateau ralentisse à 1m
         const double cmdLin = fabs(angle_rad(headLine,- head)); // Le bateau ralenti si il n'est pas en face de la ligne
