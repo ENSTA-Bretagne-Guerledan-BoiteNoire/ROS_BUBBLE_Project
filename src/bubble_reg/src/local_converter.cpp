@@ -90,7 +90,7 @@ private:
     // Internal variables
     geometry_msgs::Pose pose;
     double latOrigin = 48.1990;
-    double longOrigin = -3.0137;
+    double longOrigin = -3.0147;
     float x, y, z;
     float theta;
 };

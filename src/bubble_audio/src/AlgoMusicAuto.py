@@ -21,10 +21,10 @@ a = a / (2.0**15 - 1.0)     # Normalisation des donnees (valeurs sur 16 bits)
 
 M = 1;                       # Number of sources
 N = 2;                       # Number of microphones(on doit avoir M <= N - 1)
-dist = .08;                  # Distance between adjacent microphones(en m)
-# c = 346.287;               # Speed of sound in air(en m/s)
-c = 1500;                    # Speed of sound in water
-f = 15000;                   # Signal frequency(en Hz)
+dist = .10;                  # Distance between adjacent microphones(en m)
+c = 346.287;               # Speed of sound in air(en m/s)
+#c = 1500;                    # Speed of sound in water
+f = 5000;                   # Signal frequency(en Hz)
 
 lfft = 1024 * 1;             # Number of data points for FFT in a snapshot
 K = math.floor(np.size(a[:,0]) / lfft); # Number of frequency snapshots(multiple of lfft)
@@ -112,7 +112,7 @@ Zmi=np.argmax(Zm);
 
 # Amplitude detection Capon pour savoir si on a une fausse detection
 if (abs(Zcmax-Zcmin)<1):
-    angle=-180
+    angle=-90
     print("Source not detected")
 # Position pic MUSIC pour determiner localisation source detectee
 else:
@@ -120,7 +120,7 @@ else:
     print("Angle  :", angle )
 
 # Plot spectrum
-#pylab.figure()
-#pylab.plot(AzSearch,Zc)
-#pylab.plot(AzSearch,Zm)
-#pylab.show()
+pylab.figure()
+pylab.plot(AzSearch,Zc)
+pylab.plot(AzSearch,Zm)
+pylab.show()

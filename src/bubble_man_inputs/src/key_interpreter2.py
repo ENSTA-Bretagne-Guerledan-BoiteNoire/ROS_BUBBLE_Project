@@ -76,23 +76,25 @@ class key_interpreter():
             self.state = self.stateMap[vals[1]]
             print 'cmd state : ', vals[1]
 
-        self.angCmd = max(min(self.angCmd, 1), -1)
-        self.linCmd = max(min(self.linCmd, 1), -1)
 
-        # Creation du message twist
-        print 'cmd motors :  angular[', self.angCmd, '] / linear[', self.linCmd, ']'
-        t = Twist()
+	if self.state==self.stateMap['manual']:
+            self.angCmd = max(min(self.angCmd, 1), -1)
+            self.linCmd = max(min(self.linCmd, 1), -1)
 
-        t.angular.x = 0
-        t.angular.y = 0
-        t.angular.z = self.angCmd
+            # Creation du message twist
+            print 'cmd motors :  angular[', self.angCmd, '] / linear[', self.linCmd, ']'
+            t = Twist()
 
-        t.linear.x = self.linCmd
-        t.linear.y = 0
-        t.linear.z = 0
+            t.angular.x = 0
+            t.angular.y = 0
+            t.angular.z = self.angCmd
 
-        # Publish
-        twist_pub.publish(t)
+            t.linear.x = self.linCmd
+            t.linear.y = 0
+            t.linear.z = 0
+
+            # Publish
+            twist_pub.publish(t)
         state_pub.publish(self.state)
 
 

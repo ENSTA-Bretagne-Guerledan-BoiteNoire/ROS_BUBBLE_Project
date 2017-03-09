@@ -9,7 +9,7 @@
         <node pkg="bubble_man_inputs" name="key_interpreter" type="key_interpreter2.py"/>
 
         <!-- Regulation -->
-        <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py"/>
+        <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py" output="screen"/>
         <node pkg="bubble_reg" name="regulation" type="regulation"/>
         <node pkg="bubble_reg" name="local_converter" type="local_converter"/>
         <node pkg="bubble_reg" name="path" type="path"/>
@@ -18,7 +18,7 @@
         <node pkg="bubble_reg" name="driver_maestro" type="driver_maestro.py"/>
         <group ns="gps">
             <node pkg="nmea_navsat_driver" name="gps_driver" type="nmea_serial_driver">
-                    <param name="port" value="/dev/ttyUSB0"/>
+                    <param name="port" value="/dev/ttyUSB1"/>
                     <param name="baud" value="4800"/>
             </node>
         </group>
