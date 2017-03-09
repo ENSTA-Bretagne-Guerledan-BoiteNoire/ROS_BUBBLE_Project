@@ -45,7 +45,7 @@ public:
         //researchPath.xVec.push_back(2.0);  researchPath.yVec.push_back(2.0);
         //researchPath.xVec.push_back(-2.0); researchPath.yVec.push_back(-2.0);
 	//researchPath.step = 0;
-	researchPath = generateResPath("square",0,0,20,20);       
+	researchPath = generateResPath("square",10,0,20,20);       
 
 	std::cout << "Initialization done" << std::endl;
     }

@@ -9,10 +9,10 @@
         <node pkg="bubble_man_inputs" name="key_interpreter" type="key_interpreter2.py"/>
 
         <!-- Regulation -->
-        <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py" output="screen"/>
+        <node pkg="bubble_reg" name="cmd_interpreter_Barge" type="cmd_interpreter_Barge.py"/>
         <node pkg="bubble_reg" name="regulation" type="regulation"/>
         <node pkg="bubble_reg" name="local_converter" type="local_converter"/>
-        <node pkg="bubble_reg" name="path" type="path"/>
+        <node pkg="bubble_reg" name="path" type="path" output="screen"/>
 
         <!-- Drivers -->
         <node pkg="bubble_reg" name="driver_maestro" type="driver_maestro.py"/>
@@ -23,9 +23,9 @@
             </node>
         </group>
 
-	    <include file="$(find razor_imu_9dof)/launch/razor-pub.launch"/>
+	 <include file="$(find razor_imu_9dof)/launch/razor-pub-and-display.launch"/>
 
-	    <node pkg="bubble_disp" name="display_python" type="display_python.py"/>
+	 <node pkg="bubble_disp" name="display_python" type="display_python.py"/>
 
     </group>
 

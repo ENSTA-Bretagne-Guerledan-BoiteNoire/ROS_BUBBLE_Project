@@ -36,11 +36,11 @@ public:
     }
 
     void updateGpsFix(const sensor_msgs::NavSatFix::ConstPtr& msg){
-        pose.position.x = latDeg2meters(msg->latitude, latOrigin);
-        pose.position.y = longDeg2meters(msg->longitude, latOrigin, longOrigin);
+        pose.position.x = longDeg2meters(msg->longitude, latOrigin, longOrigin);
+        pose.position.y = latDeg2meters(msg->latitude, latOrigin);
         pose.position.z = msg->altitude;
-	printf("I received an estimated position: ([%f], [%f], [%f])\n", msg->latitude, msg->longitude, msg->altitude);
-	printf("I received an estimated position: ([%f], [%f], [%f])\n", pose.position.x, pose.position.y, pose.position.z);
+//	printf("I received an estimated position: ([%f], [%f], [%f])\n", msg->latitude, msg->longitude, msg->altitude);
+//	printf("I received an estimated position: ([%f], [%f], [%f])\n", pose.position.x, pose.position.y, pose.position.z);
 
         ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", pose.position.x, pose.position.y, pose.position.z);
     }
@@ -53,8 +53,11 @@ public:
 //        ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", x, y, z);
 //    }
 
-    void updateImu(const sensor_msgs::Imu::ConstPtr& msg){
-        pose.orientation = msg->orientation;
+    void updateImu(const sensor_msgs::Imu::ConstPtr& msg){        
+	pose.orientation = msg->orientation;
+
+        //double yaw  = tf::getYaw(pose.orientation);
+        //printf("estimated yaw : [%f]\n",yaw);
     }
 
     void spin(){
@@ -89,8 +92,8 @@ private:
 
     // Internal variables
     geometry_msgs::Pose pose;
-    double latOrigin = 48.1990;
-    double longOrigin = -3.0147;
+    double latOrigin = 48.1992;
+    double longOrigin = -3.0151;
     float x, y, z;
     float theta;
 };

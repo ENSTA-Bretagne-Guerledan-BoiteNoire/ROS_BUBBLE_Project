@@ -34,7 +34,7 @@ class display():
         self.closed = False
 
     def updatePose(self, msg):
-        print "Received pose : ",msg
+#        print "Received pose : ",msg
         self.x = msg.position.x
         self.y = msg.position.y
 
@@ -44,10 +44,11 @@ class display():
             msg.orientation.z,
             msg.orientation.w)
         (roll,pitch,yaw) = tf.euler_from_quaternion(quaternion)
-        self.theta = yaw
+        self.theta = yaw + np.pi/2.0
+	print 'Received yaw : ',yaw
 
     def updateLine(self, msg):
-        print "Received line : ",msg
+#        print "Received line : ",msg
         self.line1x = msg.prevWaypoint.x
         self.line1y = msg.prevWaypoint.y
         self.line2x = msg.nextWaypoint.x
@@ -96,15 +97,15 @@ class display():
             plt.clf()
 
             self.update_trace()
-            print "====== Plotting trace"
+            # print "====== Plotting trace"
             plt.plot(self.x, self.y, 'ro')
             plt.plot(self.xt, self.yt, 'g')
 
-            print "====== Plotting boat"
+            # print "====== Plotting boat"
             hull = self.draw_boat()
             plt.plot(hull[0], hull[1], 'k', linewidth=2)
             
-    	    print "====== Plotting Line"
+    	    # print "====== Plotting Line"
 	    plt.plot([self.line1x,self.line2x],[self.line1y,self.line2y],'r', linewidth=2)
 	    plt.plot([self.x,self.line1x],[self.y,self.line1y],'r', linewidth=2)
 
