@@ -75,7 +75,7 @@ class key_interpreter():
         elif vals[0] == 's':
             self.state = self.stateMap[vals[1]]
             print 'cmd state : ', vals[1]
-
+            
         if self.state==self.stateMap['manual']:
             self.angCmd = max(min(self.angCmd, 1), -1)
             self.linCmd = max(min(self.linCmd, 1), -1)
