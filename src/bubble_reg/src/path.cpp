@@ -44,8 +44,8 @@ public:
 
         //researchPath.xVec.push_back(2.0);  researchPath.yVec.push_back(2.0);
         //researchPath.xVec.push_back(-2.0); researchPath.yVec.push_back(-2.0);
-	//researchPath.step = 0;
-	researchPath = generateResPath("square",10,0,20,20);       
+	    //researchPath.step = 0;
+	    researchPath = generateResPath("square",0,0,20,20);
 
 	std::cout << "Initialization done" << std::endl;
     }
@@ -53,7 +53,7 @@ public:
     void updatePoseReal(const geometry_msgs::Pose::ConstPtr& msg){
         pose_real.orientation = msg->orientation;
         pose_real.position = msg->position;
-	printf("received : ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
+	    printf("received : ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
         ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
     }
 
@@ -68,14 +68,14 @@ public:
     void updateCommand(){
         // Si on a atteint le prochain waypoint, on regarde si on a besoin de changer de cap
 
-	std::cout << "Assign xWp and yWp " << std::endl;
+	    std::cout << "Assign xWp and yWp " << std::endl;
         const double xWp = researchPath.xVec[researchPath.step];
         const double yWp = researchPath.yVec[researchPath.step];
-	std::cout << "Assign x and y " << std::endl;        
-	const double x = pose_real.position.x;
+	    std::cout << "Assign x and y " << std::endl;
+	    const double x = pose_real.position.x;
         const double y = pose_real.position.y;
 	
-	std::cout << "Computing distance to waypoint " << std::endl;
+	    std::cout << "Computing distance to waypoint " << std::endl;
         const double dist2Wp = sqrt( pow(xWp-x,2) + pow(yWp-y,2) );
 
         if( dist2Wp < 2 ){
@@ -99,7 +99,7 @@ public:
                 double dist = 5; //m
                 // Point à 5m dans la direction détectée. L'IMU donne des angles en convention NED, getYaw donne des radians
                 // Passage en convention ENU
-                const double cap = ned2enu_yaw_rad(tf::getYaw(pose_real.orientation));
+                const double cap = tf::getYaw(pose_real.orientation);
                 line.nextWaypoint.x = pose_real.position.x + dist*cos(angle_rad(angle_ping,+ cap));
                 line.nextWaypoint.y = pose_real.position.y + dist*sin(angle_rad(angle_ping,+ cap));
 

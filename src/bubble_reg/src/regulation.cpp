@@ -93,15 +93,14 @@ public:
         const double y = pose_real.position.y;
         printf("y = [%f]\n",y);
 
-//        const double head = ned2enu_yaw_rad(tf::getYaw(pose_real.orientation));
         double head = tf::getYaw(pose_real.orientation);
         printf("head = [%f]\n",head);
 
-        double headLine = atan2(by-ay,bx-ax); // ENU convention
+        double headLine = atan2(by-ay,bx-ax); // ENU convention, angle from east
         printf("headLine = [%f]\n",headLine);
 
         // Si le bateau dépasse la ligne
-        const double angleNextWp2Boat = atan2(y-by,x-bx);
+        const double angleNextWp2Boat = atan2(y-by,x-bx); // ENU convention, angle from east
         printf("angleNextWp2Boat = [%f]\n",angleNextWp2Boat);
         printf("angle_rad(angleNextWp2Boat,-headLine) = [%f]\n",angle_rad(angleNextWp2Boat,-headLine));
         if(fabs(angle_rad(angleNextWp2Boat,-headLine))<M_PI/2.0){
@@ -115,7 +114,7 @@ public:
             bx = tmpx;
             by = tmpy;
 
-            headLine = atan2(by-ay,bx-ax); // ENU convention
+            headLine = atan2(by-ay,bx-ax); // ENU convention, angle from east
         }
 
         double dist2Line;
@@ -135,8 +134,8 @@ public:
         printf("wantedHead = [%f]\n", wantedHead);
 
         const double twist = angle_rad( wantedHead,- head)/2.0;
-	const double tauTwist = 2.0;        
-	cmd_vel.angular.z = (exp(tauTwist*twist)-1.0)/2.0;
+	    const double tauTwist = 2.0;
+	    cmd_vel.angular.z = (exp(tauTwist*twist)-1.0)/2.0;
         printf("twist = [%f]\n",twist);
 
 //        cmd_vel.linear.x = atan(1/brakeDist*dist2Obj); // Le 1/1* c'est pour que le bateau ralentisse à 1m

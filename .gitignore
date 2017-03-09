@@ -7,3 +7,4 @@ devel
 cmake-build-debug
 *.pyc
 *_svg
+*~

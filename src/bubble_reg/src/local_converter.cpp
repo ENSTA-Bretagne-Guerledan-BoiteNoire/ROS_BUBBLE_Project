@@ -53,11 +53,11 @@ public:
 //        ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", x, y, z);
 //    }
 
-    void updateImu(const sensor_msgs::Imu::ConstPtr& msg){        
-	pose.orientation = msg->orientation;
+    void updateImu(const sensor_msgs::Imu::ConstPtr& msg){
 
-        //double yaw  = tf::getYaw(pose.orientation);
-        //printf("estimated yaw : [%f]\n",yaw);
+        const double yaw = tf::getYaw(msg->orientation) + M_PI/2.0;
+        pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
+        printf("estimated yaw : [%f]\n",yaw);
     }
 
     void spin(){

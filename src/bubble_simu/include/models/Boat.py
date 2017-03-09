@@ -67,7 +67,7 @@ class Boat():
         self.v = v
         self.delta = delta
 
-        # Pose en coordonnée globales
+        # Pose en coordonnée globales avec les angles a partir du nord
         self.pose.position.x = x
         self.pose.position.y = y
         q = tf.quaternion_from_euler(0, 0, theta)
