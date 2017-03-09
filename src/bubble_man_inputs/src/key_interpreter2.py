@@ -9,12 +9,12 @@ from geometry_msgs.msg import Twist
 class key_interpreter():
     def __init__(self):
         self.key_mapping = {'z': [0, 1], 's': [0, -1],
-                            'q': [-1, 0], 'd': [1, 0],
+                            'q': [1, 0], 'd': [-1, 0],
                             ' ': ['STOP', 'STOP'],
                             'r': ['BACK', 'BACK'],
 
                             '8': [0, -1], '2': [0, 1],
-                            '4': [-1, 0], '6': [1, 0],
+                            '4': [1, 0], '6': [-1, 0],
                             '5': ['STOP', 'STOP'],
                             '0': ['BACK', 'BACK'],
                             'NoInputReceived': ['SLOW', 'SLOW'],

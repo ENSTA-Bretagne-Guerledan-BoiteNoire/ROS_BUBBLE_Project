@@ -133,9 +133,10 @@ public:
 //        const double wantedHead = atan(tan(headLine - atan(dist2Line)));
         printf("wantedHead = [%f]\n", wantedHead);
 
-        const double twist = angle_rad( wantedHead,- head)/2.0;
+        const double twist = angle_rad( wantedHead,- head)/5.0;
 	    const double tauTwist = 2.0;
-	    cmd_vel.angular.z = (exp(tauTwist*twist)-1.0)/2.0;
+        cmd_vel.angular.z = twist;
+	    //cmd_vel.angular.z = (exp(tauTwist*twist)-1.0)/10.0;
         printf("twist = [%f]\n",twist);
 
 //        cmd_vel.linear.x = atan(1/brakeDist*dist2Obj); // Le 1/1* c'est pour que le bateau ralentisse à 1m

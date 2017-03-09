@@ -38,17 +38,17 @@ class soundProcess():
         while not rospy.is_shutdown():
 
             print 'State : ',self.state
-            if self.state!=self.stateMap['manual']:
-                print 'Publishing state : ',self.stateMap['stationkeeping']
-                self.cmdState_pub.publish(self.stateMap['stationkeeping'])
-                print 'Processing'
-                self.angle = (process()-90)/180*np.pi # Blocking operation
-                print 'Publishing angle : ',self.angle
-                self.angle_pub.publish(self.angle)
+            #if self.state!=self.stateMap['manual']:
+            #print 'Publishing state : ',self.stateMap['stationkeeping']
+            #self.cmdState_pub.publish(self.stateMap['stationkeeping'])
+            print 'Processing'
+            self.angle = (process())/180*np.pi # Blocking operation
+            print 'Publishing angle : ',self.angle/np.pi*180
+            self.angle_pub.publish(self.angle)
 
-            if self.state!=self.stateMap['manual']:
-                print 'Publishing state : ',self.stateMap['linefollowing']
-                self.cmdState_pub.publish(self.stateMap['linefollowing'])
+            #if self.state!=self.stateMap['manual']:
+            #print 'Publishing state : ',self.stateMap['linefollowing']
+            #self.cmdState_pub.publish(self.stateMap['linefollowing'])
 
             rate.sleep()
 

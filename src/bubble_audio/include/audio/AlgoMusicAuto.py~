@@ -11,25 +11,28 @@ import soundProcessing as sp
 def process():
 
     # ========= (1) ENREGISTREMENT ==========
-    filename = "~/ROS_ws_Guerledan_BUBBLE/src/bubble_audio/include/audio/toto.wav"
-    #filename = time.strftime("%d%b%Y_%H%M%S.wav")  # titre du fichier = date
+    #filename = "toto.wav"
+    filename = time.strftime("%d%b%Y_%H%M%S.wav")  # titre du fichier = date
     RecPing.recPing(filename)  # enregistrement
 
     # ========= (2) RECEIVED SIGNAL =========
 
     Fs, a = sciwave.read(filename)
-    a = np.array(a)
-    a = a*50
-    a = sp.butter_bandpass_filter(a, 4500, 5500, Fs, order=5)
+    #a = np.array(a)
+    a = a*10
+    a_l= sp.butter_bandpass_filter(a[:,0], 4000, 6000, Fs, order=5)
+    a_r= sp.butter_bandpass_filter(a[:,1], 4000, 6000, Fs, order=5)
+    a = np.array([a_l[1000:],a_r[1000:]])
+    a = a.transpose()
     a = a / (2.0**15 - 1.0)     # Normalisation des donnees (valeurs sur 16 bits)
-
+    
     ####### Parametres modifiables ###
 
     M = 1;                       # Number of sources
     N = 2;                       # Number of microphones(on doit avoir M <= N - 1)
     dist = .10;                  # Distance between adjacent microphones(en m)
-    c = 346.287;               # Speed of sound in air(en m/s)
-    #c = 1500;                    # Speed of sound in water
+    #c = 346.287;               # Speed of sound in air(en m/s)
+    c = 1500;                    # Speed of sound in water
     f = 5000;                   # Signal frequency(en Hz)
 
     lfft = 1024 * 1;             # Number of data points for FFT in a snapshot
@@ -115,10 +118,12 @@ def process():
     Zcmin=np.amin(Zc);
     Zcmax=np.amax(Zc);
     Zmi=np.argmax(Zm);
-
+    #Zmmin=np.amin(Zm)
+    #if (abs(Zmmin-Zcmin)<2):
+       
     # Amplitude detection Capon pour savoir si on a une fausse detection
-    if (abs(Zcmax-Zcmin)<2.5):
-        angle=-90
+    if (abs(Zcmax-Zcmin)<5):
+        angle=-180
         print("Source not detected")
     # Position pic MUSIC pour determiner localisation source detectee
     else:
@@ -126,9 +131,13 @@ def process():
         print("Angle  :", angle )
 
     # Plot spectrum
-    pylab.figure()
-    pylab.plot(AzSearch,Zc)
-    pylab.plot(AzSearch,Zm)
-    pylab.show()
+    #pylab.figure()
+    #pylab.plot(AzSearch,Zc)
+    #pylab.plot(AzSearch,Zm)
+    #pylab.show()
 
-    return angle-90
+    return angle
+
+
+if __name__=="__main__":
+    process()

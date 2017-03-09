@@ -27,8 +27,8 @@ class barge_command():
         twistAngZ = msg.angular.z
         twistLinX = msg.linear.x
 
-        self.thrustL = twistLinX + twistAngZ
-        self.thrustR = twistLinX - twistAngZ
+        self.thrustL = twistLinX - twistAngZ
+        self.thrustR = twistLinX + twistAngZ
 
         print 'Publishing ',self.thrustL,' and ',self.thrustR
         self.cmdT1.publish(self.thrustL)
