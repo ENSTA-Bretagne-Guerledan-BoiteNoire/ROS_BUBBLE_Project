@@ -34,7 +34,7 @@ public:
         line.prevWaypoint.x = 0; line.prevWaypoint.y = 0;
         line.nextWaypoint.x = 0; line.nextWaypoint.y = 0;
 
-        angle_ping = -180; // -180 = non trouvé
+        angle_ping = -3; // -180 = non trouvé
 
         const tf::Quaternion q = tf::createQuaternionFromYaw(0);
         pose_real.orientation.z = q.z();
@@ -53,7 +53,7 @@ public:
     void updatePoseReal(const geometry_msgs::Pose::ConstPtr& msg){
         pose_real.orientation = msg->orientation;
         pose_real.position = msg->position;
-	    printf("received : ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
+//	    printf("received : ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
         ROS_DEBUG("I received an estimated position: ([%f], [%f], [%f])", pose_real.position.x, pose_real.position.y, pose_real.position.z);
     }
 
@@ -68,25 +68,26 @@ public:
     void updateCommand(){
         // Si on a atteint le prochain waypoint, on regarde si on a besoin de changer de cap
 
-	    std::cout << "Assign xWp and yWp " << std::endl;
-        const double xWp = researchPath.xVec[researchPath.step];
-        const double yWp = researchPath.yVec[researchPath.step];
-	    std::cout << "Assign x and y " << std::endl;
+//	    std::cout << "Assign xWp and yWp " << std::endl;
+        const double xWp = line.nextWaypoint.x ;
+        const double yWp = line.nextWaypoint.y;
+//	    std::cout << "Assign x and y " << std::endl;
 	    const double x = pose_real.position.x;
         const double y = pose_real.position.y;
 	
-	    std::cout << "Computing distance to waypoint " << std::endl;
+//	    std::cout << "Computing distance to waypoint " << std::endl;
         const double dist2Wp = sqrt( pow(xWp-x,2) + pow(yWp-y,2) );
 
-        if( dist2Wp < 2 ){
+        if( dist2Wp < 2 ){ //m
 
-	          std::cout << "Waypoint harvested " << std::endl;
+            std::cout << "Waypoint harvested :" << std::endl;
 
             line.prevWaypoint = line.nextWaypoint;
 
-            if(angle_ping==-180){
-
-                // La boite noire n'a pas encore été localisée donc on conitue le chemin habituel
+            printf("Angle_ping = %f deg \n",angle_ping/M_PI*180.0);
+            if(angle_ping<0){
+                printf("Wrong detection \n");
+                // La boite noire n'a pas encore été localisée donc on continue le chemin habituel
                 researchPath.step++;
 
                 line.nextWaypoint.x = researchPath.xVec[researchPath.step];
@@ -94,18 +95,20 @@ public:
 
             } else{
 
+                printf("Good detection \n");
+
                 // L'angle donné par le système audio est bon donc on se dirige vers celui-ci
 
-                double dist = 5; //m
+                double dist = 10; //m
                 // Point à 5m dans la direction détectée. L'IMU donne des angles en convention NED, getYaw donne des radians
                 // Passage en convention ENU
                 const double cap = tf::getYaw(pose_real.orientation);
-                line.nextWaypoint.x = pose_real.position.x + dist*cos(angle_rad(angle_ping,+ cap));
-                line.nextWaypoint.y = pose_real.position.y + dist*sin(angle_rad(angle_ping,+ cap));
+                line.nextWaypoint.x = pose_real.position.x + dist*cos( angle_rad(angle_ping,+ cap) );
+                line.nextWaypoint.y = pose_real.position.y + dist*sin( angle_rad(angle_ping,+ cap) );
 
             }
         }
-	std::cout << "Command updated " << std::endl;
+//	std::cout << "Command updated " << std::endl;
     }
 
     void spin(){
@@ -116,17 +119,17 @@ public:
 
             // call all waiting callbacks
           
-            std::cout << "Spin once " << std::endl;
+//            std::cout << "Spin once " << std::endl;
 	          ros::spinOnce();
 
             // publish the command
             if(cmd_state!=manual){
-		            std::cout << "Updating command " << std::endl;
+//		            std::cout << "Updating command " << std::endl;
                 updateCommand();
-		            std::cout << "Publishing line " << std::endl;
+//		            std::cout << "Publishing line " << std::endl;
 
                 line_pub.publish(line);
-		            std::cout << "Line published " << std::endl;
+//		            std::cout << "Line published " << std::endl;
             }
 
             loop.sleep();

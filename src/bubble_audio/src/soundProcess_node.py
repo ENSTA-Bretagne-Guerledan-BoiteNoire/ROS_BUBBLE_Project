@@ -21,7 +21,7 @@ class soundProcess():
         self.cmdState_sub = rospy.Subscriber('cmd_state', Int8, self.updateState)
 
         # Data
-        self.angle = -180
+        self.angle = -3
 
         self.stateMap = {'manual' : 0,
                          'linefollowing' : 1,
@@ -43,8 +43,8 @@ class soundProcess():
             #self.cmdState_pub.publish(self.stateMap['stationkeeping'])
             print 'Processing'
             self.angle = (process())/180*np.pi # Blocking operation
-            print 'Publishing angle : ',self.angle/np.pi*180
-            self.angle_pub.publish(self.angle)
+            print 'Publishing angle : ',self.angle/np.pi*180-90
+            self.angle_pub.publish(self.angle-np.pi/2.0)
 
             #if self.state!=self.stateMap['manual']:
             #print 'Publishing state : ',self.stateMap['linefollowing']

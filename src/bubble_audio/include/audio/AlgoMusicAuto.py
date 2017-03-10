@@ -123,7 +123,7 @@ def process():
        
     # Amplitude detection Capon pour savoir si on a une fausse detection
     if (abs(Zcmax-Zcmin)<5):
-        angle=-180
+        angle=-3
         print("Source not detected")
     # Position pic MUSIC pour determiner localisation source detectee
     else:

@@ -2,7 +2,7 @@
 # coding=utf-8
 
 import rospy
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, Point
 from std_msgs.msg import Float32
 from bubble_msgs.msg import Line
 import numpy as np
@@ -17,7 +17,8 @@ class display():
         rospy.init_node('display_python')
 
         self.pose_sub = rospy.Subscriber('pose_est', Pose, self.updatePose)
-        self.pose_sub = rospy.Subscriber('line', Line, self.updateLine)
+        self.line_sub = rospy.Subscriber('line', Line, self.updateLine)
+        self.simblackBox_sub = rospy.Subscriber('pose_blackBox', Point, self.updatePosBlackBox)
 
         # Data to display
         self.x = 0
@@ -27,6 +28,9 @@ class display():
         self.line1y = 0.0
         self.line2x = 0.0
         self.line2y = 0.0
+
+        self.bBx = 0.0
+        self.bBy = 0.0
 
         # trace
         self.xt, self.yt, self.thetat = [], [], []
@@ -53,6 +57,10 @@ class display():
         self.line1y = msg.prevWaypoint.y
         self.line2x = msg.nextWaypoint.x
         self.line2y = msg.nextWaypoint.y
+
+    def updatePosBlackBox(self, msg):
+        self.bBx = msg.x
+        self.bBy = msg.y
 
     def update_trace(self):
         MAX_SIZE = 500
@@ -107,7 +115,10 @@ class display():
             
             # print "====== Plotting Line"
             plt.plot([self.line1x,self.line2x],[self.line1y,self.line2y],'r', linewidth=2)
-            plt.plot([self.x,self.line1x],[self.y,self.line1y],'r', linewidth=2)
+            plt.plot([self.x,self.line1x],[self.y,self.line1y],'g', linewidth=1)
+
+            # print "====== Plotting BlackBox"
+            plt.plot(self.bBx,self.bBx,'hb')
 
 
             plt.axis([self.x - 150, self.x + 150, self.y - 150, self.y + 150])

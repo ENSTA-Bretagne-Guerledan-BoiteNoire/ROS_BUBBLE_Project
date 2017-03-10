@@ -17,10 +17,12 @@ class Boat():
         self.TL = TL
         self.TR = TR
 
+        self.state = 0
+
         self.coeffMotor = 5
         self.distMotor = 0.3
         self.mass = 10
-        self.inertieRot = 100
+        self.inertieRot = 30
 
         self.pose = Pose()
         self.twist = Twist()
@@ -40,11 +42,13 @@ class Boat():
         self.twist.linear.y = 0
         self.twist.linear.z = 0
 
+        print "Boat created"
+
 
     def move(boat,coeffFrot):
-        print 'prev TL :',boat.TL
-        print 'prev TR :',boat.TR
-        print 'prev v :',boat.v
+        # print 'prev TL :',boat.TL
+        # print 'prev TR :',boat.TR
+        # print 'prev v :',boat.v
 
         # on repart
 
