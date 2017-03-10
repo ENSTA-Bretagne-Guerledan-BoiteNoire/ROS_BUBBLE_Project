@@ -74,15 +74,17 @@ class world():
         # Si le bateau est assez près ET que son cap est à moins de 90 degré de la boite noire
         dist2BlackBox = np.sqrt((self.blackBox.x - self.boat.x)**2 + (self.blackBox.y - self.boat.y)**2)
         print 'dist2BlackBox = ',dist2BlackBox
-        angle2BlackBox = math.atan2(self.blackBox.y - self.boat.y,self.blackBox.x - self.boat.x)
+        angle2BlackBox = self.angle_add(math.atan2(self.blackBox.y - self.boat.y,self.blackBox.x - self.boat.x),-self.boat.theta)
         print 'angle2BlackBox = ',angle2BlackBox/np.pi*180.0,' deg'
+
         # print '-self.boat.theta = ',-self.boat.theta,' deg'
         # print 'self.angle_add(angle2BlackBox,-self.boat.theta) = ',self.angle_add(0,0)/np.pi*180.0,' deg'
         # print 'np.abs(self.angle_add(angle2BlackBox,-self.boat.theta)) = ',np.abs(self.angle_add(angle2BlackBox,-self.boat.theta))/np.pi*180.0,' deg'
+
         if dist2BlackBox<self.blackBox.range \
                 and np.abs(self.angle_add(angle2BlackBox,-self.boat.theta))<np.pi/2.0:
 
-            self.detectedAngle = angle2BlackBox-np.pi/2.0
+            self.detectedAngle = angle2BlackBox
         else:
             self.detectedAngle = -3
         print 'Attribute angle : ',self.detectedAngle

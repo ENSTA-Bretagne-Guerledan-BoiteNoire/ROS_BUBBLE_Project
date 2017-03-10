@@ -85,7 +85,7 @@ public:
             line.prevWaypoint = line.nextWaypoint;
 
             printf("Angle_ping = %f deg \n",angle_ping/M_PI*180.0);
-            if(angle_ping<0){
+            if(fabs(angle_ping)>M_PI/2.0){
                 printf("Wrong detection \n");
                 // La boite noire n'a pas encore été localisée donc on continue le chemin habituel
                 researchPath.step++;
